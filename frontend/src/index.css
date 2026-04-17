@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   Base Styles
+   ───────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #FAF7F2;
+  color: #2D2A26;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─────────────────────────────────────────────
+   Custom Scrollbar
+   ───────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3EEE8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4A373;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B5E3C;
+}
+
+/* ─────────────────────────────────────────────
+   Utility Classes
+   ───────────────────────────────────────────── */
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl
+           hover:bg-primaryHover transition-all duration-300 ease-out
+           shadow-card hover:shadow-card-hover hover:-translate-y-0.5
+           focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           bg-backgroundSoft text-primary font-semibold rounded-xl border border-primary/20
+           hover:bg-primary/10 transition-all duration-300 ease-out
+           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           text-textSecondary font-medium rounded-lg
+           hover:bg-backgroundSoft hover:text-primary transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-primary/15 rounded-xl
+           text-textPrimary placeholder-textSecondary/50
+           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40
+           transition-all duration-200;
+  }
+
+  .card-base {
+    @apply bg-card rounded-2xl shadow-card border border-primary/5
+           transition-all duration-300 ease-out;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover hover:-translate-y-1;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-accentTerracotta to-accentGold
+           bg-clip-text text-transparent;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Shimmer Skeleton
+   ───────────────────────────────────────────── */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #F3EEE8 25%,
+    #FAF7F2 50%,
+    #F3EEE8 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* ─────────────────────────────────────────────
+   Drag & Drop Zone
+   ───────────────────────────────────────────── */
+
+.drop-zone {
+  border: 2px dashed #D4A373;
+  transition: all 0.3s ease;
+}
+
+.drop-zone.active {
+  border-color: #8B5E3C;
+  background-color: rgba(139, 94, 60, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   Page Transitions
+   ───────────────────────────────────────────── */
+
+.page-enter {
+  animation: fadeIn 0.4s ease-out, slideUp 0.4s ease-out;
+}
