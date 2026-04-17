@@ -132,6 +132,8 @@ def compose_asset(
     ai_generated_path: str | None = None,
     uploaded_path: str | None = None,
     output_path: str = "output.png",
+    target_width: int | None = None,
+    target_height: int | None = None,
 ) -> str:
     """
     Compose a final Play Store screenshot asset.
@@ -151,8 +153,14 @@ def compose_asset(
         The output_path where the image was saved
     """
     # Determine dimensions
-    if orientation == "landscape":
+    if target_width and target_height:
+        width, height = target_width, target_height
+    elif orientation == "landscape":
         width, height = LANDSCAPE_SIZE
+    elif orientation == "square":
+        width, height = (1080, 1080)
+    elif orientation == "banner":
+        width, height = (1024, 500)
     else:
         width, height = PORTRAIT_SIZE
 
@@ -160,12 +168,20 @@ def compose_asset(
 
     # ─── Check AI Generated ───
     if ai_generated_path and os.path.exists(ai_generated_path):
-        # AI generated the full asset with text and mockup natively
-        import shutil
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        shutil.copy2(ai_generated_path, output_path)
-        logger.info(f"AI generated asset saved to: {output_path}")
-        return output_path
+        # Ensure exact dimensions even if AI returned slightly different
+        try:
+            img = Image.open(ai_generated_path).convert("RGB")
+            if img.size != (width, height):
+                logger.info(f"Resizing AI asset from {img.size} to {width}x{height}")
+                img = img.resize((width, height), Image.LANCZOS)
+            
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            img.save(output_path, "PNG", quality=95)
+            logger.info(f"AI generated asset (resized) saved to: {output_path}")
+            return output_path
+        except Exception as e:
+            logger.error(f"Failed to process AI generated image: {e}")
+            # Fall back to composition if image is corrupt or fails
     
     # ─── Fallback Execution ───
     # Generate a gradient background since AI failed

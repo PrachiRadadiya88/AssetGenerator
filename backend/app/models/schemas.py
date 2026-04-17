@@ -12,6 +12,9 @@ class AssetItem(BaseModel):
     headline: str
     subtext: Optional[str] = None
     image_url: str
+    orientation: str = "portrait"
+    width: int
+    height: int
 
 
 class GenerateAssetsResponse(BaseModel):
@@ -34,6 +37,9 @@ class AddAssetRequest(BaseModel):
     include_subtext: bool = False
     target_os: str = "iOS"
     existing_headlines: list[str] = Field(default_factory=list)
+    use_raw_features: bool = False
+    include_emojis: bool = True
+    size: str = "1080x1920"
 
 
 class AddAssetResponse(BaseModel):
@@ -119,3 +125,8 @@ class RegenerateAssetRequest(BaseModel):
     include_subtext: bool = False
     is_hero: bool = False
     asset_index: int = 0
+    use_raw_features: bool = False
+    include_emojis: bool = True
+    orientation: str = "portrait"
+    size: str = "1080x1920"
+    size: str = "1080x1920"

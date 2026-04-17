@@ -30,6 +30,7 @@ from app.models.schemas import (
     GenerateFeaturesRequest,
     GenerateFeaturesResponse,
     RegenerateAssetRequest,
+    FeatureContent,
 )
 from app.services.gemini_service import (
     generate_feature_copy,
@@ -37,6 +38,7 @@ from app.services.gemini_service import (
     generate_ad_creatives_text,
     generate_ad_image,
     extract_features_list,
+    generate_subtext,
 )
 from app.services.image_service import compose_asset, compose_ad_asset
 
@@ -53,10 +55,21 @@ os.makedirs(GENERATED_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 
-def _get_dimensions(orientation: str) -> tuple[int, int]:
-    """Get width and height based on orientation."""
+def _get_dimensions(orientation: str, custom_size: str = None):
+    """Get width and height based on orientation or custom size string."""
+    if custom_size and "x" in custom_size:
+        try:
+            w, h = map(int, custom_size.split("x"))
+            return w, h
+        except:
+            pass
+
     if orientation == "landscape":
         return 1920, 1080
+    if orientation == "banner":
+        return 1024, 500
+    if orientation == "square":
+        return 1080, 1080
     return 1080, 1920  # portrait (default)
 
 
@@ -67,11 +80,18 @@ async def generate_assets(
     brand_style: str = Form(""),
     app_category: str = Form(...),
     color_theme: str = Form("#8B5E3C"),
-    orientation: str = Form("portrait"),
-    target_os: str = Form("iOS"),
-    num_assets: int = Form(2),
+    target_os: str = "iOS",
+    num_portrait: int = Form(4),
+    num_landscape: int = Form(0),
+    num_square: int = Form(0),
+    include_banner: bool = Form(True),
+    portrait_size: str = Form("1080x1920"),
+    landscape_size: str = Form("1920x1080"),
+    square_size: str = Form("1080x1080"),
     features: str = Form("[]"),
     include_subtext: bool = Form(False),
+    use_raw_features: bool = Form(False),
+    include_emojis: bool = Form(True),
     screenshots: Optional[list[UploadFile]] = File(None),
 ):
     """
@@ -84,8 +104,6 @@ async def generate_assets(
     session_id = str(uuid.uuid4())[:8]
     session_dir = os.path.join(GENERATED_DIR, session_id)
     os.makedirs(session_dir, exist_ok=True)
-
-    width, height = _get_dimensions(orientation)
 
     # Save uploaded screenshots if provided
     uploaded_paths = []
@@ -110,34 +128,69 @@ async def generate_assets(
     except:
         feature_list = ["Core Feature 1", "Core Feature 2"]
         
-    # Clamp num_assets to valid range
-    num_assets = max(2, min(8, num_assets))
+    # Build the list of requirements for this batch
+    asset_requirements = [] # list of (orientation, feature_concept, index)
+    
+    current_index = 0
+    
+    # 1. Feature Graphic (Banner)
+    if include_banner:
+        asset_requirements.append(("banner", feature_list[0], current_index, "1024x500"))
+        current_index += 1
+        
+    # 2. Portrait Screenshots
+    num_portrait = max(0, min(8, num_portrait))
+    for i in range(num_portrait):
+        feat = feature_list[current_index % len(feature_list)]
+        asset_requirements.append(("portrait", feat, current_index, portrait_size))
+        current_index += 1
+        
+    # 3. Landscape Screenshots
+    num_landscape = max(0, min(8, num_landscape))
+    for i in range(num_landscape):
+        feat = feature_list[current_index % len(feature_list)]
+        asset_requirements.append(("landscape", feat, current_index, landscape_size))
+        current_index += 1
+        
+    # 4. Square Screenshots
+    num_square = max(0, min(8, num_square))
+    for i in range(num_square):
+        feat = feature_list[current_index % len(feature_list)]
+        asset_requirements.append(("square", feat, current_index, square_size))
+        current_index += 1
 
-    # Landscape: only 1 asset; Portrait: use num_assets
-    if orientation == "landscape":
-        initial_features = feature_list[:1]
-        if not initial_features:
-            initial_features = ["Core Feature"]
-    else:
-        # Use exactly num_assets features, cycling if fewer features than assets
-        initial_features = []
-        for i in range(num_assets):
-            initial_features.append(feature_list[i % len(feature_list)])
+    # Clamp total assets if needed (e.g. max 12 total)
+    asset_requirements = asset_requirements[:12]
 
     # Step 1: Generate feature content (headlines + subtext) via Gemini
     try:
-        tasks = [
-            generate_feature_copy(
-                app_name=app_name,
-                app_category=app_category,
-                target_audience=target_audience,
-                brand_style=brand_style,
-                feature_concept=feat_concept,
-                is_hero=(i == 0),
-                include_subtext=include_subtext,
-            ) for i, feat_concept in enumerate(initial_features)
-        ]
-        generated_features = await asyncio.gather(*tasks)
+        initial_features_concepts = [req[1] for req in asset_requirements]
+        
+        if use_raw_features:
+            generated_features = []
+            for feat in initial_features_concepts:
+                subtext = None
+                if include_subtext:
+                    subtext = await generate_subtext(
+                        app_name=app_name,
+                        app_category=app_category,
+                        feature_concept=feat,
+                        headline=feat
+                    )
+                generated_features.append(FeatureContent(feature=feat, headline=feat, subtext=subtext))
+        else:
+            tasks = [
+                generate_feature_copy(
+                    app_name=app_name,
+                    app_category=app_category,
+                    target_audience=target_audience,
+                    brand_style=brand_style,
+                    feature_concept=feat_concept,
+                    is_hero=(i == 0),
+                    include_subtext=include_subtext,
+                ) for i, feat_concept in enumerate(initial_features_concepts)
+            ]
+            generated_features = await asyncio.gather(*tasks)
     except Exception as e:
         logger.error(f"Feature generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"AI text generation failed: {str(e)}")
@@ -148,29 +201,34 @@ async def generate_assets(
         bg_path = os.path.join(session_dir, f"{asset_id}_bg.png")
         final_path = os.path.join(session_dir, f"{asset_id}.png")
 
-        # Determine if we should use an uploaded screenshot
+        # Determine if we should use an uploaded screenshot (only for portrait/landscape, not banner usually but we'll follow indices)
         uploaded_path = uploaded_paths[i] if i < len(uploaded_paths) else None
+        
+        # Get dimensions for this specific asset's orientation
+        asset_orientation, _, _, asset_size_str = asset_requirements[i]
+        asset_width, asset_height = _get_dimensions(asset_orientation, asset_size_str)
 
         # Retry up to 3 attempts for AI image generation
         max_retries = 3
         success = False
         for attempt in range(1, max_retries + 1):
             try:
-                logger.info(f"Image generation attempt {attempt}/{max_retries} for {asset_id}")
+                logger.info(f"Image generation attempt {attempt}/{max_retries} for {asset_id} ({asset_orientation})")
                 await generate_asset_image(
                     app_name=app_name,
                     app_category=app_category,
                     feature=feature.feature,
                     headline=feature.headline,
                     color_theme=color_theme,
-                    width=width,
-                    height=height,
+                    width=asset_width,
+                    height=asset_height,
                     output_path=bg_path,
-                    orientation=orientation,
+                    orientation=asset_orientation,
                     uploaded_image_path=uploaded_path,
                     asset_index=i,
                     target_os=target_os,
                     subtext=feature.subtext,
+                    include_emojis=include_emojis,
                 )
                 success = True
                 break  # Success, exit retry loop
@@ -190,10 +248,12 @@ async def generate_assets(
             compose_asset(
                 headline=feature.headline,
                 color_theme=color_theme,
-                orientation=orientation,
+                orientation=asset_orientation,
                 ai_generated_path=bg_path,
                 uploaded_path=uploaded_path,
                 output_path=final_path,
+                target_width=asset_width,
+                target_height=asset_height,
             )
         except Exception as e:
             logger.error(f"Image composition failed for {asset_id}: {e}")
@@ -204,6 +264,9 @@ async def generate_assets(
             headline=feature.headline,
             subtext=feature.subtext,
             image_url=f"/generated/{session_id}/{asset_id}.png",
+            orientation=asset_orientation,
+            width=asset_width,
+            height=asset_height,
         )
 
     tasks = [process_asset(i, feature) for i, feature in enumerate(generated_features)]
@@ -226,23 +289,34 @@ async def add_asset(request: AddAssetRequest):
     session_dir = os.path.join(GENERATED_DIR, request.session_id)
     os.makedirs(session_dir, exist_ok=True)
 
-    width, height = _get_dimensions(request.orientation)
-
-    # Count existing assets to determine the next ID
-    existing_files = [f for f in os.listdir(session_dir) if f.endswith(".png") and not f.endswith("_bg.png")]
+    orientation = request.orientation
+    size_str = getattr(request, 'size', None)
+    width, height = _get_dimensions(orientation, size_str)
+    
     next_num = len(existing_files) + 1
     asset_id = f"asset-{next_num}"
 
     # Step 1: Generate unique feature content
     try:
-        feature = await generate_feature_copy(
-            app_name=request.app_name,
-            app_category=request.app_category,
-            target_audience=request.target_audience,
-            brand_style=request.brand_style,
-            feature_concept=request.target_feature,
-            include_subtext=request.include_subtext,
-        )
+        if request.use_raw_features:
+            subtext = None
+            if request.include_subtext:
+                subtext = await generate_subtext(
+                    app_name=request.app_name,
+                    app_category=request.app_category,
+                    feature_concept=request.target_feature,
+                    headline=request.target_feature
+                )
+            feature = FeatureContent(feature=request.target_feature, headline=request.target_feature, subtext=subtext)
+        else:
+            feature = await generate_feature_copy(
+                app_name=request.app_name,
+                app_category=request.app_category,
+                target_audience=request.target_audience,
+                brand_style=request.brand_style,
+                feature_concept=request.target_feature,
+                include_subtext=request.include_subtext,
+            )
     except Exception as e:
         logger.error(f"Single feature generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"AI text generation failed: {str(e)}")
@@ -270,6 +344,7 @@ async def add_asset(request: AddAssetRequest):
                 asset_index=next_num - 1,
                 target_os=request.target_os,
                 subtext=feature.subtext,
+                include_emojis=request.include_emojis,
             )
             success = True
             break  # Success
@@ -292,6 +367,8 @@ async def add_asset(request: AddAssetRequest):
             ai_generated_path=bg_path,
             uploaded_path=None, # Only initial batch takes uploads
             output_path=final_path,
+            target_width=width,
+            target_height=height,
         )
     except Exception as e:
         logger.error(f"Image composition failed for {asset_id}: {e}")
@@ -303,6 +380,9 @@ async def add_asset(request: AddAssetRequest):
             headline=feature.headline,
             subtext=feature.subtext,
             image_url=f"/generated/{request.session_id}/{asset_id}.png",
+            orientation=orientation,
+            width=width,
+            height=height,
         )
     )
 
@@ -564,20 +644,33 @@ async def regenerate_asset(request: RegenerateAssetRequest):
     final_path = os.path.join(session_dir, f"{asset_id}.png")
 
     try:
-        feature_data = await generate_feature_copy(
-            app_name=request.app_name,
-            app_category=request.app_category,
-            target_audience=request.target_audience,
-            brand_style=request.brand_style,
-            feature_concept=request.feature_concept,
-            is_hero=request.is_hero,
-            include_subtext=request.include_subtext,
-        )
+        if request.use_raw_features:
+            subtext = None
+            if request.include_subtext:
+                subtext = await generate_subtext(
+                    app_name=request.app_name,
+                    app_category=request.app_category,
+                    feature_concept=request.feature_concept,
+                    headline=request.feature_concept
+                )
+            feature_data = FeatureContent(feature=request.feature_concept, headline=request.feature_concept, subtext=subtext)
+        else:
+            feature_data = await generate_feature_copy(
+                app_name=request.app_name,
+                app_category=request.app_category,
+                target_audience=request.target_audience,
+                brand_style=request.brand_style,
+                feature_concept=request.feature_concept,
+                is_hero=request.is_hero,
+                include_subtext=request.include_subtext,
+            )
     except Exception as e:
         logger.error(f"Feature copy regeneration failed: {e}")
         raise HTTPException(status_code=500, detail="AI text generation failed")
 
-    width, height = _get_dimensions(request.orientation)
+    orientation = request.orientation
+    size_str = getattr(request, 'size', None)
+    width, height = _get_dimensions(orientation, size_str)
     
     max_retries = 3
     success = False
@@ -597,6 +690,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
                 asset_index=request.asset_index,
                 target_os=request.target_os,
                 subtext=feature_data.subtext,
+                include_emojis=request.include_emojis,
             )
             success = True
             break
@@ -615,6 +709,8 @@ async def regenerate_asset(request: RegenerateAssetRequest):
             ai_generated_path=bg_path,
             uploaded_path=None,  # We don't support passing uploaded file for single regeneration yet
             output_path=final_path,
+            target_width=width,
+            target_height=height,
         )
     except Exception as e:
         logger.error(f"Image composition failed: {e}")
@@ -625,4 +721,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
         headline=feature_data.headline,
         subtext=feature_data.subtext,
         image_url=f"/generated/{request.session_id}/{asset_id}.png",
+        orientation=orientation,
+        width=width,
+        height=height,
     )

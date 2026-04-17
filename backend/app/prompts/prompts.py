@@ -136,7 +136,9 @@ LAYOUT INSTRUCTIONS (Top to Bottom):
    - Display this exact text: {headline}
    - CRITICAL: Do NOT write words like "HEADLINE BANNER" or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
-   - The text must be massive, bold, and dominant — like a billboard.
+   - The text must be massive, bold, and dominant — but it MUST be fully contained within the canvas.
+   - ENSURE there is generous padding (at least 60px) between the text and all edges of the image.
+   - DO NOT cut off any letters or words. If the headline is long, use multiple lines within the upper section.
    - Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
    - Left-aligned with generous padding.
    - If the following line is not empty, display it directly below the headline in a smaller, lighter weight: {subtext}
@@ -262,7 +264,8 @@ LAYOUT COMPOSITION:
    - Display this exact text as the headline: {headline}
    - CRITICAL: Do NOT write words like "LEFT BLOCK", "RIGHT SIDE", or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
-   - The headline must be massive, bold, and dominant.
+   - The headline must be massive, bold, and dominant, yet FULLY VISIBLE and NOT clipped by any edges.
+   - Keep it within the left 60% block with comfortable padding from the top and left edges.
    - If the following line is not empty, display it directly below the headline in a smaller, lighter weight: {subtext}
    - Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
    - Left-aligned with generous padding.

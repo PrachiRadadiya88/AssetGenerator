@@ -103,29 +103,12 @@ async def generate_feature_copy(
         # --- Generate subtext separately if requested ---
         subtext = None
         if include_subtext:
-            try:
-                subtext_prompt = (
-                    f"You are a copywriter. Given this app headline: \"{headline}\" for the app \"{app_name}\" "
-                    f"(a {app_category} app, feature: {feature_concept}), "
-                    f"write ONE short supporting tagline (6-12 words) that reinforces the benefit. "
-                    f"Output ONLY the tagline text, nothing else. No quotes, no labels, no explanation."
-                )
-                sub_response = client.models.generate_content(
-                    model="gemini-3-flash-preview",
-                    contents=subtext_prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=0.7,
-                        max_output_tokens=60,
-                    ),
-                )
-                if sub_response.text:
-                    subtext = sub_response.text.strip()
-                    subtext = re.sub(r'^["\']|["\']$', '', subtext).strip()
-                    subtext = re.sub(r'^(Here is|Here\'s|Subtext[:\s]|Tagline[:\s])', '', subtext, flags=re.IGNORECASE).strip()
-                    subtext = subtext.split('\n')[0].strip()
-            except Exception as e:
-                logger.warning(f"Subtext generation failed: {e}")
-                subtext = None
+            subtext = await generate_subtext(
+                app_name=app_name,
+                app_category=app_category,
+                feature_concept=feature_concept,
+                headline=headline
+            )
 
         return FeatureContent(
             feature=feature_concept,
@@ -139,6 +122,40 @@ async def generate_feature_copy(
     except Exception as e:
         logger.error(f"Gemini text generation failed: {e}")
         raise
+
+
+async def generate_subtext(
+    app_name: str,
+    app_category: str,
+    feature_concept: str,
+    headline: str,
+) -> str | None:
+    """Generate a short supporting tagline for a given headline."""
+    client = _get_client()
+    try:
+        subtext_prompt = (
+            f"You are a copywriter. Given this app headline: \"{headline}\" for the app \"{app_name}\" "
+            f"(a {app_category} app, feature: {feature_concept}), "
+            f"write ONE short supporting tagline (6-12 words) that reinforces the benefit. "
+            f"Output ONLY the tagline text, nothing else. No quotes, no labels, no explanation."
+        )
+        sub_response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=subtext_prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.7,
+                max_output_tokens=60,
+            ),
+        )
+        if sub_response.text:
+            subtext = sub_response.text.strip()
+            subtext = re.sub(r'^["\']|["\']$', '', subtext).strip()
+            subtext = re.sub(r'^(Here is|Here\'s|Subtext[:\s]|Tagline[:\s])', '', subtext, flags=re.IGNORECASE).strip()
+            subtext = subtext.split('\n')[0].strip()
+            return subtext
+    except Exception as e:
+        logger.warning(f"Subtext generation failed: {e}")
+    return None
 
 
 # ─────────────────────────────────────────────
@@ -163,6 +180,7 @@ async def generate_asset_image(
     asset_index: int = 0,
     target_os: str = "iOS",
     subtext: str | None = None,
+    include_emojis: bool = True,
 ) -> str:
     """
     Generate an image using Gemini's experimental imagen-3.0-generate-002 model.
@@ -170,10 +188,8 @@ async def generate_asset_image(
     """
     client = _get_client()
 
-    import random
-    # Increase emoji frequency to ~50% and make it more consistent
-    # Using asset_index for consistent spread: assets 0, 2, 4... will have emoji if randomness allows
-    emoji_instruction = EMOJI_INCLUDE if (asset_index % 2 == 0 or random.random() > 0.5) else EMOJI_EXCLUDE
+    # Use the provided flag to choose between including and excluding emojis
+    emoji_instruction = EMOJI_INCLUDE if include_emojis else EMOJI_EXCLUDE
     
     subtext_val = subtext if subtext else ""
 

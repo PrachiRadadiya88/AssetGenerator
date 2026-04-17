@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Download, Eye, RotateCw, X, Loader2 } from 'lucide-react';
 import { fetchImageAsBlob } from '../services/api';
 
-export default function AssetCard({ asset, index, orientation, onRemove, onRegenerate, isRegenerating }) {
+export default function AssetCard({ asset, index, onRemove, onRegenerate, isRegenerating }) {
+  const orientation = asset.orientation || 'portrait';
   const isPortrait = orientation === 'portrait';
+  const isBanner = orientation === 'banner';
   const [blobUrl, setBlobUrl] = useState(null);
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
@@ -65,7 +67,11 @@ export default function AssetCard({ asset, index, orientation, onRemove, onRegen
       <div className="relative overflow-hidden bg-backgroundSoft">
         <div
           className="w-full"
-          style={{ aspectRatio: isPortrait ? '9/16' : '16/9' }}
+          style={{ 
+            aspectRatio: (asset.width && asset.height) 
+              ? `${asset.width}/${asset.height}` 
+              : (isPortrait ? '9/16' : (isBanner ? '1024/500' : '16/9'))
+          }}
         >
           {isRegenerating || isLoadingImage ? (
             <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-secondary/10">
@@ -115,8 +121,11 @@ export default function AssetCard({ asset, index, orientation, onRemove, onRegen
         </div>
 
         {/* Asset number badge */}
-        <div className="absolute top-3 left-3 w-7 h-7 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center">
-          <span className="text-xs font-bold text-white">{index + 1}</span>
+        <div className="absolute top-3 left-3 px-2 h-7 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center gap-1.5">
+          <span className="text-[10px] font-bold text-white uppercase tracking-wider">{orientation}</span>
+          <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+            <span className="text-[10px] font-black text-white">{index + 1}</span>
+          </div>
         </div>
       </div>
     </div>

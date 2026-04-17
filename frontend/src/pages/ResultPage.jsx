@@ -56,9 +56,11 @@ export default function ResultPage() {
         brandStyle: appDetails.brandStyle,
         appCategory: appDetails.appCategory,
         colorTheme: appDetails.colorTheme,
-        orientation: appDetails.orientation,
+        orientation: 'portrait',
         targetOs: appDetails.targetOs,
         includeSubtext: appDetails.includeSubtext,
+        useRawFeatures: appDetails.useRawFeatures,
+        includeEmojis: appDetails.includeEmojis,
         targetFeature: targetFeature,
       });
       const newAssets = [...assets, result.asset];
@@ -155,10 +157,12 @@ export default function ResultPage() {
         targetAudience: appDetails.targetAudience,
         brandStyle: appDetails.brandStyle,
         colorTheme: appDetails.colorTheme,
-        orientation: orientation,
+        orientation: asset.orientation || 'portrait',
         targetOs: appDetails.targetOs,
         featureConcept: targetFeature,
         includeSubtext: appDetails.includeSubtext,
+        useRawFeatures: appDetails.useRawFeatures,
+        includeEmojis: appDetails.includeEmojis,
         isHero: isHero,
         assetIndex: index,
       });
@@ -221,7 +225,6 @@ export default function ResultPage() {
         <div className="space-y-6">
           <AssetGrid 
             assets={assets} 
-            orientation={orientation} 
             onRemove={handleRemoveAsset}
             onRegenerate={handleRegenerateAsset}
             isRegeneratingId={regeneratingId}

@@ -6,7 +6,7 @@
 
 import axios from 'axios';
 
-// const API_BASE = 'http://localhost:8000';
+// const API_BASE = 'http://localhost:8001';
 // const API_BASE = 'https://plural-muster-treading.ngrok-free.dev';
 const API_BASE = 'https://asset-gen.rejoicehub.com';
 const API_URL = `${API_BASE}/api`;
@@ -34,30 +34,44 @@ api.interceptors.request.use(config => {
  * @param {File[]} params.screenshots - Optional uploaded screenshots
  * @returns {Promise<{session_id: string, assets: Array}>}
  */
-export async function generateAssets({
+export const generateAssets = async ({
   appName,
-  targetAudience = '',
-  brandStyle = '',
+  targetAudience,
+  brandStyle,
   appCategory,
-  colorTheme = '#8B5E3C',
-  orientation = 'portrait',
+  colorTheme,
+  numPortrait,
+  numLandscape,
+  numSquare,
+  portraitSize,
+  landscapeSize,
+  squareSize,
+  includeBanner,
+  features,
+  includeSubtext,
+  useRawFeatures,
+  includeEmojis,
+  screenshots,
   targetOs = 'iOS',
-  numAssets = 4,
-  features = [],
-  includeSubtext = false,
-  screenshots = [],
-}) {
+}) => {
   const formData = new FormData();
   formData.append('app_name', appName);
   formData.append('target_audience', targetAudience);
   formData.append('brand_style', brandStyle);
   formData.append('app_category', appCategory);
   formData.append('color_theme', colorTheme);
-  formData.append('orientation', orientation);
-  formData.append('target_os', targetOs);
-  formData.append('num_assets', numAssets.toString());
+  formData.append('num_portrait', numPortrait);
+  formData.append('num_landscape', numLandscape);
+  formData.append('num_square', numSquare);
+  formData.append('portrait_size', portraitSize);
+  formData.append('landscape_size', landscapeSize);
+  formData.append('square_size', squareSize);
+  formData.append('include_banner', includeBanner);
   formData.append('features', JSON.stringify(features));
-  formData.append('include_subtext', includeSubtext ? 'true' : 'false');
+  formData.append('include_subtext', includeSubtext);
+  formData.append('use_raw_features', useRawFeatures);
+  formData.append('include_emojis', includeEmojis);
+  formData.append('target_os', targetOs);
 
   // Append screenshots if provided
   if (screenshots && screenshots.length > 0) {
@@ -97,7 +111,10 @@ export async function addAsset({
   targetOs = 'iOS',
   targetFeature,
   includeSubtext = false,
+  useRawFeatures = false,
+  includeEmojis = true,
   existingHeadlines = [],
+  size = '1080x1920',
 }) {
   const payload = {
     session_id: sessionId,
@@ -110,7 +127,10 @@ export async function addAsset({
     target_os: targetOs,
     target_feature: targetFeature,
     include_subtext: includeSubtext,
+    use_raw_features: useRawFeatures,
+    include_emojis: includeEmojis,
     existing_headlines: existingHeadlines,
+    size: size,
   };
 
   const response = await api.post('/add-asset', payload);
@@ -303,8 +323,11 @@ export async function regenerateAsset({
   targetOs = 'iOS',
   featureConcept,
   includeSubtext = false,
+  useRawFeatures = false,
+  includeEmojis = true,
   isHero = false,
   assetIndex = 0,
+  size = '1080x1920',
 }) {
   const response = await api.post('/regenerate-asset', {
     session_id: sessionId,
@@ -318,8 +341,11 @@ export async function regenerateAsset({
     target_os: targetOs,
     feature_concept: featureConcept,
     include_subtext: includeSubtext,
+    use_raw_features: useRawFeatures,
+    include_emojis: includeEmojis,
     is_hero: isHero,
     asset_index: assetIndex,
+    size: size,
   });
   return response.data;
 }
