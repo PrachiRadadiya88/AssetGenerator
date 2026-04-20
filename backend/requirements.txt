@@ -5,3 +5,5 @@ google-genai==1.9.0
 Pillow==10.4.0
 python-dotenv==1.0.1
 pydantic==2.9.0
+google-play-scraper==1.2.7
+requests==2.32.3
