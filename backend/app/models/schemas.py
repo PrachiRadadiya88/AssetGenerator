@@ -130,7 +130,7 @@ class RegenerateAssetRequest(BaseModel):
     target_audience: str
     brand_style: str
     color_theme: str
-    orientation: str
+    orientation: str = "portrait"
     target_os: str = "iOS"
     feature_concept: str
     include_subtext: bool = False
@@ -138,9 +138,9 @@ class RegenerateAssetRequest(BaseModel):
     asset_index: int = 0
     use_raw_features: bool = False
     include_emojis: bool = True
-    orientation: str = "portrait"
     size: str = "1080x1920"
-    size: str = "1080x1920"
+    existing_headline: Optional[str] = None
+    existing_subtext: Optional[str] = None
 
 class ScrapePlayStoreRequest(BaseModel):
     url: str

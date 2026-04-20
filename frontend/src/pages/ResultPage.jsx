@@ -62,6 +62,7 @@ export default function ResultPage() {
         useRawFeatures: appDetails.useRawFeatures,
         includeEmojis: appDetails.includeEmojis,
         targetFeature: targetFeature,
+        size: appDetails.portraitSize || '1080x1920',
       });
       const newAssets = [...assets, result.asset];
       setAssets(newAssets);
@@ -146,7 +147,20 @@ export default function ResultPage() {
 
     const totalFeatures = appDetails.features.length;
     const isHero = index === 0;
-    const targetFeature = isHero ? "Main App Overview" : (appDetails.features[index % totalFeatures] || "App Feature");
+    
+    // Determine the feature concept based on index, accounting for the banner if present
+    let targetFeature = "Main App Overview";
+    if (!isHero) {
+      const featureIndex = appDetails.includeBanner ? (index - 1) : index;
+      targetFeature = appDetails.features[featureIndex % totalFeatures] || "App Feature";
+    }
+
+    // Determine the exact dimensions used for this orientation
+    let targetSize = '1080x1920';
+    if (asset.orientation === 'landscape') targetSize = appDetails.landscapeSize;
+    else if (asset.orientation === 'square') targetSize = appDetails.squareSize;
+    else if (asset.orientation === 'banner') targetSize = '1024x500';
+    else targetSize = appDetails.portraitSize || '1080x1920';
 
     try {
       const result = await regenerateAsset({
@@ -165,6 +179,9 @@ export default function ResultPage() {
         includeEmojis: appDetails.includeEmojis,
         isHero: isHero,
         assetIndex: index,
+        size: targetSize,
+        existing_headline: asset.headline,
+        existing_subtext: asset.subtext,
       });
       
       const newAssets = assets.map((a) => a.id === asset.id ? result : a);

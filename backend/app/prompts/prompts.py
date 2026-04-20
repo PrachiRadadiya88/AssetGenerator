@@ -132,7 +132,7 @@ CANVAS: {width}x{height} pixels (portrait orientation).
 
 LAYOUT INSTRUCTIONS (Top to Bottom):
 1. Upper Section (top 25-30% of the canvas):
-   - Background: solid {color_theme} color, vibrant and saturated.
+   - Background: {color_theme} color theme, vibrant and saturated.
    - Display this exact text: {headline}
    - CRITICAL: Do NOT write words like "HEADLINE BANNER" or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
@@ -151,8 +151,11 @@ DEVICE PRESENTATION (VERY IMPORTANT — follow this exactly):
 
 {target_os} SCREEN UI REQUIREMENTS (if a phone is required by the style above):
 - Design a realistic, production-quality mobile app screen for a {app_category} app perfectly fitted to a {target_os} phone.
+- IMPORTANT: The physical {target_os} device MUST be clearly identifiable. 
+  - For iOS: Use the latest iPhone style with the Dynamic Island and rounded screen corners.
+  - For Android: Use a modern flagship style with a small centered punch-hole camera and slim symmetric bezels.
 - The screen UI MUST explicitly demonstrate the functionality described in: {headline}
-- Include a status bar (time, battery, signal) at the top suitable for {target_os}
+- Include a status bar (time, battery, signal icons) at the top in the exact style of {target_os}.
 - Use real, meaningful content — NO placeholder text, NO lorem ipsum
 - Create dynamic visual depth: pop key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of phone bezel)
 - Use {color_theme} as the accent color for buttons, highlights, and active states
@@ -306,7 +309,7 @@ IMPORTANT — SCREENSHOT USAGE:
 
 LAYOUT INSTRUCTIONS (Top to Bottom):
 1. Upper Section (top 25-30%):
-   - Background: solid {color_theme} color, vibrant and saturated.
+   - Background: {color_theme} color theme, vibrant and saturated.
    - Display this exact text: {headline}
    - CRITICAL: Do NOT write words like "HEADLINE BANNER" or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
@@ -321,10 +324,13 @@ DEVICE PRESENTATION (VERY IMPORTANT — follow this exactly):
 {mockup_style}
 
 PHONE SCREEN UI:
-- Based on the uploaded screenshot's design language but elevated to premium quality
+- Based on the uploaded screenshot's design language but elevated to premium quality.
+- IMPORTANT: The physical {target_os} device MUST be clearly identifiable. 
+  - For iOS: Use the latest iPhone style with the Dynamic Island and rounded screen corners.
+  - For Android: Use a modern flagship style with a small centered punch-hole camera and slim symmetric bezels.
 - The screen must explicitly demonstrate: {headline}
 - Create dynamic visual depth by popping key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of the phone bezel)
-- Include status bar (time, battery, signal)
+- Include status bar (time, battery, signal icons) in the exact style of {target_os}.
 - All content must be realistic — NO placeholder text
 - Use {color_theme} as accent color
 - The screen must look like a real, polished, shipping app

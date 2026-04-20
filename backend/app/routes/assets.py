@@ -650,7 +650,14 @@ async def regenerate_asset(request: RegenerateAssetRequest):
     final_path = os.path.join(session_dir, f"{asset_id}.png")
 
     try:
-        if request.use_raw_features:
+        if request.existing_headline:
+            feature_data = FeatureContent(
+                feature=request.feature_concept,
+                headline=request.existing_headline,
+                subtext=request.existing_subtext
+            )
+            logger.info(f"Preserving existing headline for regeneration: {request.existing_headline}")
+        elif request.use_raw_features:
             subtext = None
             if request.include_subtext:
                 subtext = await generate_subtext(

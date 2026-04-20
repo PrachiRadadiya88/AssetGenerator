@@ -354,6 +354,8 @@ export async function regenerateAsset({
   isHero = false,
   assetIndex = 0,
   size = '1080x1920',
+  existing_headline = null,
+  existing_subtext = null,
 }) {
   const response = await api.post('/regenerate-asset', {
     session_id: sessionId,
@@ -372,6 +374,8 @@ export async function regenerateAsset({
     is_hero: isHero,
     asset_index: assetIndex,
     size: size,
+    existing_headline: existing_headline,
+    existing_subtext: existing_subtext,
   });
   return response.data;
 }
