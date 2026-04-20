@@ -26,9 +26,29 @@ export default function Navbar() {
           </Link>
 
           {/* Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <Link 
+              to="/description-generator" 
+              className={`text-sm font-semibold transition-colors ${
+                location.pathname === '/description-generator' 
+                  ? 'text-primary' 
+                  : 'text-textSecondary hover:text-textPrimary'
+              }`}
+            >
+              Description Gen
+            </Link>
+            <Link 
+              to="/rebrand" 
+              className={`text-sm font-semibold transition-colors ${
+                location.pathname === '/rebrand' 
+                  ? 'text-primary' 
+                  : 'text-textSecondary hover:text-textPrimary'
+              }`}
+            >
+              Rebrand Assets
+            </Link>
             {!isGenerator ? (
-              <Link to="/generator" className="btn-primary text-sm">
+              <Link to="/generator" className="btn-primary text-sm flex items-center gap-2">
                 <LayoutGrid className="w-4 h-4" />
                 Open Generator
               </Link>

@@ -64,8 +64,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files to serve generated images
+# Mount static files to serve generated images and uploads
 app.mount("/generated", StaticFiles(directory=str(GENERATED_DIR)), name="generated")
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
 # Include API routes
 app.include_router(assets_router, prefix="/api", tags=["Assets"])

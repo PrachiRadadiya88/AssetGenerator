@@ -5,6 +5,7 @@
  * and CTA to navigate to the generator.
  */
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Sparkles,
@@ -14,9 +15,20 @@ import {
   Palette,
   Smartphone,
   Layers,
+  FileText,
+  CheckCircle,
+  Users,
+  CheckCircle2,
+  HelpCircle,
+  Quote,
+  Plus,
+  Timer,
+  ChevronDown,
   ArrowRight,
   Zap,
   Shield,
+  Megaphone,
+  RotateCcw,
 } from 'lucide-react';
 
 const features = [
@@ -50,6 +62,21 @@ const features = [
     title: 'One-Click Download',
     description: 'Download all your generated assets at once as a ZIP file, ready for immediate upload to the Play Console.',
   },
+  {
+    icon: <Megaphone className="w-5 h-5" />,
+    title: 'Ad Campaign Creatives',
+    description: 'Generate scroll-stopping Instagram and Facebook ad visuals tailored to your app\'s unique features.',
+  },
+  {
+    icon: <FileText className="w-5 h-5" />,
+    title: 'ASO-Optimized Copy',
+    description: 'Generate high-converting Play Store descriptions with the perfect balance of keywords and engagement.',
+  },
+  {
+    icon: <RotateCcw className="w-5 h-5" />,
+    title: 'Instant App Rebranding',
+    description: 'Scrape any Play Store URL to automatically extract metadata and screenshots for a seamless redesign.',
+  },
 ];
 
 const steps = [
@@ -70,71 +97,174 @@ const steps = [
   },
 ];
 
+const faqs = []; // Removed content
+
 export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState(null);
+
   return (
-    <div className="page-enter">
+    <div className="page-enter bg-backgroundMain selection:bg-primary/20">
       {/* ─── Hero Section ─── */}
-      <section className="relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-accentGold/10 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-accentTerracotta/10 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl" />
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden py-20">
+        {/* Modern Mesh Gradient Background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-[10%] right-[-5%] w-[40%] h-[40%] bg-accentGold/15 rounded-full blur-[100px]" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-accentTerracotta/10 rounded-full blur-[80px]" />
+          
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] contrast-150" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
-          <div className="text-center max-w-3xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Asset Generation
-            </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
 
-            {/* Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-textPrimary leading-tight mb-6 animate-slide-up">
-              Create Stunning{' '}
-              <span className="gradient-text">Play Store</span>{' '}
-              Screenshots in Seconds
+            {/* Main Headline */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-textPrimary leading-[1.1] mb-8 animate-slide-up tracking-tight">
+              Ship Faster. <br />
+              <span className="gradient-text">Convert Higher.</span>
             </h1>
 
-            {/* Subheading */}
-            <p className="text-lg sm:text-xl text-textSecondary leading-relaxed mb-10 animate-slide-up" style={{ animationDelay: '100ms' }}>
-              Generate professional, high-quality screenshot assets for your app listing.
-              Powered by AI to create unique visuals and compelling copy that converts.
+            {/* Subtext */}
+            <p className="text-xl text-textSecondary leading-relaxed mb-12 animate-slide-up max-w-2xl mx-auto" style={{ animationDelay: '100ms' }}>
+              The all-in-one AI toolkit to generate premium Play Store screenshots, high-converting ad creatives, and optimized descriptions in seconds.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
-              <Link to="/generator" className="btn-primary text-base px-8 py-4" id="hero-cta">
-                <Zap className="w-5 h-5" />
-                Start Generating
-                <ArrowRight className="w-4 h-4" />
+            {/* CTA Container */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
+              <Link to="/generator" className="group relative btn-primary text-lg px-8 py-5 bg-primary shadow-[0_20px_40px_-15px_rgba(139,94,60,0.4)] overflow-hidden w-full sm:w-auto">
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <ImageIcon className="w-5 h-5 relative z-10" />
+                <span className="relative z-10">Generate Assets</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
               </Link>
-              <a href="#how-it-works" className="btn-ghost text-base">
-                See How It Works
-              </a>
+              
+              <Link to="/rebrand" className="group btn-secondary text-lg px-8 py-5 border-2 border-primary/10 hover:border-primary/30 bg-white/60 backdrop-blur-md w-full sm:w-auto">
+                <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform" />
+                <span>Rebrand App</span>
+              </Link>
+
+              <Link to="/description-generator" className="group btn-secondary text-lg px-8 py-5 border-2 border-primary/10 hover:border-primary/30 bg-white/60 backdrop-blur-md w-full sm:w-auto">
+                <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>Write Copy</span>
+              </Link>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex items-center justify-center gap-6 mt-12 text-textSecondary/60 text-sm animate-fade-in" style={{ animationDelay: '400ms' }}>
-              <div className="flex items-center gap-1.5">
-                <Shield className="w-4 h-4" />
-                <span>No login required</span>
-              </div>
-              <div className="w-1 h-1 rounded-full bg-textSecondary/30" />
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4" />
-                <span>Results in ~30s</span>
-              </div>
-              <div className="w-1 h-1 rounded-full bg-textSecondary/30" />
-              <div className="flex items-center gap-1.5">
-                <Download className="w-4 h-4" />
-                <span>Free to use</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
+
+      {/* ─── toolkit Selection — Revamped ─── */}
+      <section className="py-24 relative overflow-hidden bg-white/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-textPrimary">Your Marketing Stack</h2>
+                <div className="w-12 h-1 bg-primary/20 mx-auto mt-4 rounded-full" />
+            </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Tool Card 1 */}
+            <Link to="/generator" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
+                <div className="aspect-video overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1551651639-927b595f815c?auto=format&fit=crop&q=80&w=1000" alt="Screenshots" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-8 text-white">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-4">
+                            <ImageIcon className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">Screenshot Generator</h3>
+                        <p className="text-white/80 max-w-sm mb-4">Transform raw app captures into high-converting store assets.</p>
+                        <div className="flex items-center gap-2 font-bold text-sm">
+                            Open Tool <ArrowRight className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </Link>
+
+            {/* Tool Card 2 */}
+            <Link to="/description-generator" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
+                <div className="aspect-video overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&q=80&w=1000" alt="Copywriting" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-accentTerracotta/80 to-transparent flex flex-col justify-end p-8 text-white">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-4">
+                            <FileText className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">Description Generator</h3>
+                        <p className="text-white/80 max-w-sm mb-4">Write professional, SEO-friendly listings with Gemini AI.</p>
+                        <div className="flex items-center gap-2 font-bold text-sm">
+                            Start Writing <ArrowRight className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </Link>
+
+            {/* Tool Card 3 */}
+            <Link to="/rebrand" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
+                <div className="aspect-video overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000" alt="Analytics/Rebrand" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-accentGold/80 to-transparent flex flex-col justify-end p-8 text-white">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-4">
+                            <RotateCcw className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">Rebrand Module</h3>
+                        <p className="text-white/80 max-w-sm mb-4">Input a Play Store URL to redesign existing app assets instantly.</p>
+                        <div className="flex items-center gap-2 font-bold text-sm">
+                            Try Rebrand <ArrowRight className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Live Preview Section ─── */}
+      <section className="py-24 bg-backgroundSoft">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 className="text-4xl font-black text-textPrimary leading-tight mb-6">
+                        Assets that <br />
+                        <span className="text-primary italic">Demand Attention.</span>
+                    </h2>
+                    <p className="text-lg text-textSecondary mb-8 leading-relaxed">
+                        Don't settle for generic app store pages. Our AI understands your app's value and creates visuals that highlight exactly why users should hit "Install".
+                    </p>
+                    <ul className="space-y-4">
+                        {[
+                            'High-fidelity 3D phone mockups',
+                            'Benefit-focused AI headlines',
+                            'Customizable brand colors & styles',
+                            'Single-click ZIP export'
+                        ].map((item, i) => (
+                            <li key={i} className="flex items-center gap-3 font-semibold text-textPrimary">
+                                <CheckCircle2 className="w-5 h-5 text-accentGreen" />
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="relative">
+                    <div className="absolute inset-0 bg-primary/10 rounded-[3rem] blur-3xl -rotate-6" />
+                    <div className="relative bg-white p-4 rounded-[2.5rem] shadow-2xl border border-primary/5">
+                        <img 
+                            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800" 
+                            alt="Preview" 
+                            className="rounded-[2rem] w-full shadow-inner"
+                        />
+                        {/* Interactive overlay elements */}
+                        <div className="absolute -top-6 -right-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce">
+                            <Sparkles className="w-8 h-8 text-accentGold" />
+                        </div>
+                        <div className="absolute -bottom-6 -left-6 bg-primary p-4 rounded-2xl shadow-xl text-white font-bold">
+                            <Layers className="w-6 h-6 inline mr-2" />
+                            Premium Layers
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
 
       {/* ─── How It Works ─── */}
       <section id="how-it-works" className="py-20 bg-backgroundSoft/50">

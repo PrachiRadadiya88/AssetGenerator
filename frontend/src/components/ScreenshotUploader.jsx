@@ -8,7 +8,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
-const MAX_FILES = 8;
+const MAX_FILES = 20;
 const MAX_SIZE_MB = 10;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 

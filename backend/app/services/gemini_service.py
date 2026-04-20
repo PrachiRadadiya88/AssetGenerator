@@ -25,8 +25,9 @@ from app.prompts.prompts import (
     GENERATE_ADS_PROMPT,
     AD_IMAGE_PROMPT,
     AD_CREATIVE_STYLES,
+    GENERATE_PLAY_STORE_DESCRIPTION_PROMPT,
 )
-from app.models.schemas import FeatureContent, AdItem
+from app.models.schemas import FeatureContent, AdItem, AppDescriptionResponse
 
 logger = logging.getLogger(__name__)
 
@@ -509,3 +510,51 @@ async def extract_features_list(
     except Exception as e:
         logger.error(f"Failed to generate feature list from description: {e}")
         return ["Core Experience", "Seamless Navigation", "Smart Analytics", "Quick Sync", "Cloud Backup"]
+
+async def generate_app_description(
+    app_name: str,
+    app_category: str,
+    target_audience: str,
+    brand_style: str,
+    features: list[str],
+) -> AppDescriptionResponse:
+    """Generate a Play Store app description using Gemini."""
+    client = _get_client()
+
+    features_list = "\n".join([f"- {f}" for f in features])
+    prompt = GENERATE_PLAY_STORE_DESCRIPTION_PROMPT.format(
+        app_name=app_name,
+        app_category=app_category,
+        target_audience=target_audience,
+        brand_style=brand_style,
+        features_list=features_list,
+    )
+
+    try:
+        logger.info(f"Generating Play Store description for {app_name}...")
+        response = await client.aio.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.8,
+                response_mime_type="application/json",
+            )
+        )
+        
+        text_resp = response.text or ""
+        text_resp = text_resp.strip()
+        
+        try:
+            parsed = json.loads(text_resp)
+        except json.JSONDecodeError:
+            if text_resp.startswith("```json"):
+                text_resp = text_resp[7:-3].strip()
+            parsed = json.loads(text_resp)
+            
+        return AppDescriptionResponse(
+            short_description=parsed.get("short_description", "")[:80],
+            full_description=parsed.get("full_description", "")
+        )
+    except Exception as e:
+        logger.error(f"Gemini description generation failed: {e}")
+        raise

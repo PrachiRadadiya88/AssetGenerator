@@ -31,6 +31,10 @@ from app.models.schemas import (
     GenerateFeaturesResponse,
     RegenerateAssetRequest,
     FeatureContent,
+    GenerateDescriptionRequest,
+    AppDescriptionResponse,
+    ScrapePlayStoreRequest,
+    ScrapedAppData,
 )
 from app.services.gemini_service import (
     generate_feature_copy,
@@ -39,7 +43,9 @@ from app.services.gemini_service import (
     generate_ad_image,
     extract_features_list,
     generate_subtext,
+    generate_app_description,
 )
+from app.services.scrape_service import scrape_app_details
 from app.services.image_service import compose_asset, compose_ad_asset
 
 logger = logging.getLogger(__name__)
@@ -725,3 +731,35 @@ async def regenerate_asset(request: RegenerateAssetRequest):
         width=width,
         height=height,
     )
+
+@router.post("/generate-play-store-description", response_model=AppDescriptionResponse)
+async def generate_play_store_description(request: GenerateDescriptionRequest):
+    """Generate Play Store short and full descriptions based on app details."""
+    try:
+        description = await generate_app_description(
+            app_name=request.app_name,
+            app_category=request.app_category,
+            target_audience=request.target_audience,
+            brand_style=request.brand_style,
+            features=request.features,
+        )
+        return description
+    except Exception as e:
+        logger.error(f"Description generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate app description")
+
+@router.post("/scrape-playstore", response_model=ScrapedAppData)
+async def scrape_playstore(request: ScrapePlayStoreRequest):
+    """
+    Scrape app details from Play Store and analyze them.
+    Assigns a temporary session ID for downloaded images.
+    """
+    session_id = str(uuid.uuid4())
+    try:
+        data = await scrape_app_details(request.url, session_id)
+        return ScrapedAppData(**data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Play Store scrape failed: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error while scraping Play Store")

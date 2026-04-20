@@ -111,6 +111,17 @@ class GenerateFeaturesRequest(BaseModel):
 class GenerateFeaturesResponse(BaseModel):
     features: list[str]
 
+class GenerateDescriptionRequest(BaseModel):
+    app_name: str
+    app_category: str
+    target_audience: str
+    brand_style: str
+    features: list[str]
+
+class AppDescriptionResponse(BaseModel):
+    short_description: str
+    full_description: str
+
 class RegenerateAssetRequest(BaseModel):
     session_id: str
     asset_id: str
@@ -130,3 +141,16 @@ class RegenerateAssetRequest(BaseModel):
     orientation: str = "portrait"
     size: str = "1080x1920"
     size: str = "1080x1920"
+
+class ScrapePlayStoreRequest(BaseModel):
+    url: str
+
+class ScrapedAppData(BaseModel):
+    app_name: str
+    app_description: str
+    app_category: str
+    screenshots: list[str]
+    icon: str
+    suggested_audience: str
+    suggested_style: str
+    suggested_color: str

@@ -518,3 +518,46 @@ AD_CREATIVE_STYLES = [
 - Clean, Instagram-worthy aesthetic
 - Think: Product flat lay posts from brands like Apple, Moleskine, or Muji""",
 ]
+
+# ─────────────────────────────────────────────
+# PLAY STORE DESCRIPTION GENERATOR PROMPT
+# ─────────────────────────────────────────────
+
+GENERATE_PLAY_STORE_DESCRIPTION_PROMPT = """You are an expert App Store Optimization (ASO) specialist and conversion-focused copywriter.
+Your goal is to write a high-converting Play Store listing description for the app "{app_name}".
+
+APP CONTEXT:
+- Name: {app_name}
+- Category: {app_category}
+- Target Audience: {target_audience}
+- Brand Style: {brand_style}
+- Core Features: {features_list}
+
+YOUR TASK:
+Generate two parts of the listing:
+1. SHORT DESCRIPTION (max 80 characters):
+   - This is the most important piece of text.
+   - It must be ultra-punchy, benefit-driven, and fit within the character limit.
+   - NO exclamation marks (Play Store policy often flags them).
+   - Must hook the user immediately.
+
+2. FULL DESCRIPTION (optimized for engagement and SEO):
+   - Introduction (2-3 sentences): Hook the user with the core problem/solution.
+   - Key Benefits/Features (bullet points): Use the provided features list to create engaging, benefit-focused bullet points (e.g. "🚀 Feature Name: The user benefit").
+   - Detailed Explanation (1-2 paragraphs): Expand on the app's value.
+   - Social Proof/Trust (optional but good).
+   - Call to Action (CTA).
+
+STRICT OUTPUT RULE:
+- Return ONLY a JSON object with the following keys:
+  - "short_description": (string, max 80 chars)
+  - "full_description": (string, markdown formatted for the full listing)
+
+DO NOT use markdown backticks in the root output. Return raw JSON.
+
+Output Format Example:
+{{
+  "short_description": "The easiest way to track your daily goals and stay productive.",
+  "full_description": "Are you struggling with productivity?...\\n\\nKey Features:\\n- ✅ Smart Tracking: ...\\n- ☁️ Cloud Sync: ..."
+}}
+"""

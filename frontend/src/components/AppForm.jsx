@@ -141,7 +141,7 @@ function SizeSelector({ label, selectedSize, options, onChange, isLoading }) {
   );
 }
 
-export default function AppForm({ onSubmit, isLoading, screenshots, setScreenshots }) {
+export default function AppForm({ onSubmit, isLoading, screenshots, setScreenshots, initialData }) {
   const navType = useNavigationType();
   const [formData, setFormData] = useState(() => {
     const defaultData = {
@@ -170,6 +170,10 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
       squareSize: '1080x1080',
     };
 
+    if (initialData) {
+      return { ...defaultData, ...initialData };
+    }
+
     const navEntries = window.performance.getEntriesByType('navigation');
     const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
     const shouldRestore = navType === 'POP' && !isReload;
@@ -186,6 +190,13 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
 
     return defaultData;
   });
+
+  // If initialData is provided later, update form
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({ ...prev, ...initialData }));
+    }
+  }, [initialData]);
 
   const [isGeneratingFeatures, setIsGeneratingFeatures] = useState(false);
 

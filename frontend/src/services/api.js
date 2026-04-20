@@ -145,7 +145,8 @@ export async function addAsset({
  * @returns {string} Full URL
  */
 export function getImageUrl(imagePath) {
-  return `${API_BASE}${imagePath}`;
+  if (imagePath.startsWith('/')) return `${API_BASE}${imagePath}`;
+  return `${API_BASE}/${imagePath}`;
 }
 
 /**
@@ -176,6 +177,31 @@ export async function fetchImageAsBlob(imagePath) {
     return window.URL.createObjectURL(response.data);
   } catch (error) {
     console.error("Failed to fetch image as blob", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch an image and convert it to a File object.
+ * 
+ * @param {string} imagePath 
+ * @param {string} fileName 
+ * @returns {Promise<File>}
+ */
+export async function fetchImageFile(imagePath, fileName = 'screenshot.png') {
+  try {
+    const url = imagePath.startsWith('http') ? imagePath : (imagePath.startsWith('/') ? `${API_BASE}${imagePath}` : `${API_BASE}/${imagePath}`);
+    const response = await axios.get(url, {
+      responseType: 'blob',
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    });
+
+    // Create a File from the blob
+    return new File([response.data], fileName, { type: response.data.type });
+  } catch (error) {
+    console.error("Failed to fetch image as file", error);
     return null;
   }
 }
@@ -347,5 +373,45 @@ export async function regenerateAsset({
     asset_index: assetIndex,
     size: size,
   });
+  return response.data;
+}
+
+/**
+ * Generate Play Store short and full descriptions.
+ * 
+ * @param {Object} params
+ * @param {string} params.appName
+ * @param {string} params.appCategory
+ * @param {string} params.targetAudience
+ * @param {string} params.brandStyle
+ * @param {string[]} params.features
+ * @returns {Promise<{short_description: string, full_description: string}>}
+ */
+export async function generatePlayStoreDescription({
+  appName,
+  appCategory,
+  targetAudience = '',
+  brandStyle = '',
+  features = [],
+}) {
+  const response = await api.post('/generate-play-store-description', {
+    app_name: appName,
+    app_category: appCategory,
+    target_audience: targetAudience,
+    brand_style: brandStyle,
+    features: features,
+  });
+
+  return response.data;
+}
+
+/**
+ * Scrape app details from Play Store.
+ * 
+ * @param {string} url - Play Store URL or package ID
+ * @returns {Promise<Object>} Scraped app data and AI suggestions
+ */
+export async function scrapePlayStore(url) {
+  const response = await api.post('/scrape-playstore', { url });
   return response.data;
 }
