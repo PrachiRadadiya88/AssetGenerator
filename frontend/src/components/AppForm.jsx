@@ -168,6 +168,7 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
       portraitSize: '1080x1920',
       landscapeSize: '1920x1080',
       squareSize: '1080x1080',
+      consistentBackground: true,
     };
 
     if (initialData) {
@@ -384,7 +385,7 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
               />
               <div className="flex-1">
                 <div className="text-sm font-semibold text-textPrimary">AI-Enhanced Headlines</div>
-                <div className="text-[11px] text-textSecondary mt-0.5">When enabled, Gemini will transform your features into punchy marketing headlines.</div>
+                <div className="text-[11px] text-textSecondary mt-0.5">When enabled, AssetGen will transform your features into punchy marketing headlines.</div>
               </div>
             </label>
           </div>
@@ -641,6 +642,30 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
             <div className="flex-1 pl-1">
               <div className="text-sm font-semibold text-textPrimary">Include Visual Emojis</div>
               <div className="text-[11px] text-textSecondary mt-0.5">Scatters relevant 3D emojis around the design for visual depth.</div>
+            </div>
+          </label>
+        </div>
+
+        {/* --- Consistent Background Toggle --- */}
+        <div className="mb-4">
+          <label className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+            formData.consistentBackground 
+              ? 'border-primary/50 bg-primary/5' 
+              : 'border-primary/10 bg-white hover:border-primary/20'
+          }`}>
+            <div className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={formData.consistentBackground}
+                onChange={(e) => handleChange('consistentBackground', e.target.checked)}
+                disabled={isLoading}
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </div>
+            <div className="flex-1 pl-1">
+              <div className="text-sm font-semibold text-textPrimary">Consistent Background</div>
+              <div className="text-[11px] text-textSecondary mt-0.5">Enforce the full color theme across all assets. Disable for layout variety.</div>
             </div>
           </label>
         </div>

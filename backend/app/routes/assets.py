@@ -98,6 +98,7 @@ async def generate_assets(
     include_subtext: bool = Form(False),
     use_raw_features: bool = Form(False),
     include_emojis: bool = Form(True),
+    consistent_background: bool = Form(True),
     screenshots: Optional[list[UploadFile]] = File(None),
 ):
     """
@@ -235,6 +236,7 @@ async def generate_assets(
                     target_os=target_os,
                     subtext=feature.subtext,
                     include_emojis=include_emojis,
+                    consistent_background=consistent_background,
                 )
                 success = True
                 break  # Success, exit retry loop
@@ -299,6 +301,7 @@ async def add_asset(request: AddAssetRequest):
     size_str = getattr(request, 'size', None)
     width, height = _get_dimensions(orientation, size_str)
     
+    existing_files = _get_generated_screenshots(session_dir)
     next_num = len(existing_files) + 1
     asset_id = f"asset-{next_num}"
 
@@ -351,6 +354,7 @@ async def add_asset(request: AddAssetRequest):
                 target_os=request.target_os,
                 subtext=feature.subtext,
                 include_emojis=request.include_emojis,
+                consistent_background=request.consistent_background,
             )
             success = True
             break  # Success
@@ -704,6 +708,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
                 target_os=request.target_os,
                 subtext=feature_data.subtext,
                 include_emojis=request.include_emojis,
+                consistent_background=request.consistent_background,
             )
             success = True
             break
@@ -749,6 +754,8 @@ async def generate_play_store_description(request: GenerateDescriptionRequest):
             target_audience=request.target_audience,
             brand_style=request.brand_style,
             features=request.features,
+            app_description=request.app_description,
+            include_emojis=request.include_emojis,
         )
         return description
     except Exception as e:

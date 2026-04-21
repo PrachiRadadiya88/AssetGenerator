@@ -189,7 +189,7 @@ export default function HomePage() {
                             <FileText className="w-6 h-6" />
                         </div>
                         <h3 className="text-2xl font-bold mb-2">Description Generator</h3>
-                        <p className="text-white/80 max-w-sm mb-4">Write professional, SEO-friendly listings with Gemini AI.</p>
+                        <p className="text-white/80 max-w-sm mb-4">Write professional, SEO-friendly listings with AssetGen.</p>
                         <div className="flex items-center gap-2 font-bold text-sm">
                             Start Writing <ArrowRight className="w-4 h-4" />
                         </div>
@@ -360,7 +360,7 @@ export default function HomePage() {
       <footer className="py-8 border-t border-primary/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-textSecondary">
-            Built with ❤️ using Gemini AI · Play Store Screenshot Asset Generator
+            Built with ❤️ using AssetGen · Play Store Screenshot Asset Generator
           </p>
         </div>
       </footer>

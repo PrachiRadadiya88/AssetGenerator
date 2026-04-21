@@ -51,6 +51,7 @@ export const generateAssets = async ({
   includeSubtext,
   useRawFeatures,
   includeEmojis,
+  consistentBackground = true,
   screenshots,
   targetOs = 'iOS',
 }) => {
@@ -60,6 +61,7 @@ export const generateAssets = async ({
   formData.append('brand_style', brandStyle);
   formData.append('app_category', appCategory);
   formData.append('color_theme', colorTheme);
+  formData.append('target_os', targetOs);
   formData.append('num_portrait', numPortrait);
   formData.append('num_landscape', numLandscape);
   formData.append('num_square', numSquare);
@@ -71,7 +73,7 @@ export const generateAssets = async ({
   formData.append('include_subtext', includeSubtext);
   formData.append('use_raw_features', useRawFeatures);
   formData.append('include_emojis', includeEmojis);
-  formData.append('target_os', targetOs);
+  formData.append('consistent_background', consistentBackground);
 
   // Append screenshots if provided
   if (screenshots && screenshots.length > 0) {
@@ -115,6 +117,7 @@ export async function addAsset({
   includeEmojis = true,
   existingHeadlines = [],
   size = '1080x1920',
+  consistentBackground = true,
 }) {
   const payload = {
     session_id: sessionId,
@@ -131,6 +134,7 @@ export async function addAsset({
     include_emojis: includeEmojis,
     existing_headlines: existingHeadlines,
     size: size,
+    consistent_background: consistentBackground,
   };
 
   const response = await api.post('/add-asset', payload);
@@ -306,7 +310,7 @@ export async function addAdCreative({
 }) {
   const response = await api.post('/add-ad', {
     session_id: sessionId,
-    app_name: appName,
+    app_name: app_name,
     target_audience: targetAudience,
     brand_style: brandStyle,
     app_category: appCategory,
@@ -356,6 +360,7 @@ export async function regenerateAsset({
   size = '1080x1920',
   existing_headline = null,
   existing_subtext = null,
+  consistentBackground = true,
 }) {
   const response = await api.post('/regenerate-asset', {
     session_id: sessionId,
@@ -376,6 +381,7 @@ export async function regenerateAsset({
     size: size,
     existing_headline: existing_headline,
     existing_subtext: existing_subtext,
+    consistent_background: consistentBackground,
   });
   return response.data;
 }
@@ -397,6 +403,8 @@ export async function generatePlayStoreDescription({
   targetAudience = '',
   brandStyle = '',
   features = [],
+  appDescription = '',
+  includeEmojis = true,
 }) {
   const response = await api.post('/generate-play-store-description', {
     app_name: appName,
@@ -404,6 +412,8 @@ export async function generatePlayStoreDescription({
     target_audience: targetAudience,
     brand_style: brandStyle,
     features: features,
+    app_description: appDescription,
+    include_emojis: includeEmojis,
   });
 
   return response.data;

@@ -30,6 +30,8 @@ export default function DescriptionGeneratorPage() {
     targetAudience: '',
     brandStyle: '',
     features: [],
+    appDescription: '',
+    includeEmojis: true,
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -170,6 +172,18 @@ export default function DescriptionGeneratorPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-bold text-textPrimary mb-2">App Description</label>
+                <textarea
+                  className="input-field min-h-[100px] resize-y"
+                  placeholder="Describe your app's core value, functionality, and unique selling points..."
+                  value={formData.appDescription}
+                  onChange={(e) => handleChange('appDescription', e.target.value)}
+                  disabled={isGenerating}
+                />
+                <p className="text-[10px] text-textSecondary mt-1">This helps the AI understand the context and purpose of your app.</p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-bold text-textPrimary mb-2">Brand Style</label>
                 <select
                     className="input-field appearance-none mb-2"
@@ -209,7 +223,32 @@ export default function DescriptionGeneratorPage() {
                 <FeatureInputList
                     features={formData.features}
                     setFeatures={(feats) => handleChange('features', feats)}
+                    minRequired={1}
                 />
+              </div>
+
+              {/* Emoji Toggle */}
+              <div className="pt-2">
+                <label className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                    formData.includeEmojis 
+                    ? 'border-primary/50 bg-primary/5' 
+                    : 'border-primary/10 bg-white hover:border-primary/20'
+                }`}>
+                    <div className="relative inline-flex items-center cursor-pointer">
+                    <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={formData.includeEmojis}
+                        onChange={(e) => handleChange('includeEmojis', e.target.checked)}
+                        disabled={isGenerating}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </div>
+                    <div className="flex-1 pl-1">
+                    <div className="text-sm font-semibold text-textPrimary">Include Story Emojis</div>
+                    <div className="text-[11px] text-textSecondary mt-0.5">Use emojis to make the description more engaging and visual.</div>
+                    </div>
+                </label>
               </div>
 
               <button
@@ -242,7 +281,7 @@ export default function DescriptionGeneratorPage() {
                         <Wand2 className="w-8 h-8 text-primary animate-bounce" />
                     </div>
                 </div>
-                <h3 className="text-xl font-bold text-textPrimary">Writing with Gemini...</h3>
+                <h3 className="text-xl font-bold text-textPrimary">Writing with AssetGen...</h3>
                 <p className="text-sm text-textSecondary text-center mt-2 max-w-[250px]">
                   Analyzing your app and crafting the perfect Play Store copy. This takes about 10-15 seconds.
                 </p>
@@ -299,7 +338,7 @@ export default function DescriptionGeneratorPage() {
               <div className="h-full flex flex-col items-center justify-center p-10 bg-backgroundSoft/50 rounded-3xl border-2 border-dashed border-primary/10 opacity-60">
                 <Send className="w-10 h-10 text-textSecondary mb-4" />
                 <p className="text-sm font-medium text-textSecondary text-center">
-                  Fill the form to see your <br /> AI-generated description here.
+                  Fill the form to see your <br /> AssetGen description here.
                 </p>
               </div>
             )}

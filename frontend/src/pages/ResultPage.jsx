@@ -63,6 +63,7 @@ export default function ResultPage() {
         includeEmojis: appDetails.includeEmojis,
         targetFeature: targetFeature,
         size: appDetails.portraitSize || '1080x1920',
+        consistentBackground: appDetails.consistentBackground,
       });
       const newAssets = [...assets, result.asset];
       setAssets(newAssets);
@@ -182,6 +183,7 @@ export default function ResultPage() {
         size: targetSize,
         existing_headline: asset.headline,
         existing_subtext: asset.subtext,
+        consistentBackground: appDetails.consistentBackground,
       });
       
       const newAssets = assets.map((a) => a.id === asset.id ? result : a);

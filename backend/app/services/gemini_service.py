@@ -21,6 +21,8 @@ from app.prompts.prompts import (
     IMAGE_ENHANCE_PROMPT_V3,
     EMOJI_INCLUDE,
     EMOJI_EXCLUDE,
+    BACKGROUND_CONSISTENT,
+    BACKGROUND_VARIED,
     MOCKUP_STYLES,
     GENERATE_ADS_PROMPT,
     AD_IMAGE_PROMPT,
@@ -182,6 +184,7 @@ async def generate_asset_image(
     target_os: str = "iOS",
     subtext: str | None = None,
     include_emojis: bool = True,
+    consistent_background: bool = True,
 ) -> str:
     """
     Generate an image using Gemini's experimental imagen-3.0-generate-002 model.
@@ -191,6 +194,9 @@ async def generate_asset_image(
 
     # Use the provided flag to choose between including and excluding emojis
     emoji_instruction = EMOJI_INCLUDE if include_emojis else EMOJI_EXCLUDE
+    
+    # Background instruction
+    bg_instruction = BACKGROUND_CONSISTENT.format(color_theme=color_theme) if consistent_background else BACKGROUND_VARIED.format(color_theme=color_theme)
     
     subtext_val = subtext if subtext else ""
 
@@ -207,6 +213,7 @@ async def generate_asset_image(
             height=height,
             include_emoji=emoji_instruction,
             target_os=target_os,
+            background_instruction=bg_instruction,
         )
         contents = prompt
     elif uploaded_image_path and os.path.exists(uploaded_image_path):
@@ -225,6 +232,7 @@ async def generate_asset_image(
             height=height,
             target_os=target_os,
             subtext=subtext_val,
+            background_instruction=bg_instruction,
         )
         
         # Read the uploaded image
@@ -258,6 +266,7 @@ async def generate_asset_image(
             mockup_style=mockup_style_str,
             target_os=target_os,
             subtext=subtext_val,
+            background_instruction=bg_instruction,
         )
         contents = prompt
 
@@ -307,6 +316,7 @@ async def generate_asset_image(
     except Exception as e:
         logger.error(f"Gemini image generation failed: {e}")
         raise
+
 
 async def generate_ad_creatives_text(
     app_name: str,
@@ -517,17 +527,23 @@ async def generate_app_description(
     target_audience: str,
     brand_style: str,
     features: list[str],
+    app_description: str = "",
+    include_emojis: bool = True,
 ) -> AppDescriptionResponse:
     """Generate a Play Store app description using Gemini."""
     client = _get_client()
 
     features_list = "\n".join([f"- {f}" for f in features])
+    emoji_instruction = "Include relevant emojis for engagement." if include_emojis else "Do NOT include any emojis. Keep the text clean."
+
     prompt = GENERATE_PLAY_STORE_DESCRIPTION_PROMPT.format(
         app_name=app_name,
         app_category=app_category,
         target_audience=target_audience,
         brand_style=brand_style,
         features_list=features_list,
+        app_description=app_description,
+        emoji_instruction=emoji_instruction,
     )
 
     try:

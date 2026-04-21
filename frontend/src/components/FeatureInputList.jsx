@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 
-export default function FeatureInputList({ features, setFeatures }) {
+export default function FeatureInputList({ features, setFeatures, minRequired = 2 }) {
   const [newValue, setNewValue] = useState('');
 
   const handleAdd = () => {
@@ -51,7 +51,7 @@ export default function FeatureInputList({ features, setFeatures }) {
       <div className="flex items-center justify-between">
         <span className="text-[11px] text-textSecondary">
           {features.length} feature{features.length !== 1 ? 's' : ''} added
-          {features.length < 2 && <span className="text-accentTerracotta ml-1">(min 2 required)</span>}
+          {features.length < minRequired && <span className="text-accentTerracotta ml-1">(min {minRequired} required)</span>}
         </span>
         {features.length > 0 && features.length < 8 && (
           <span className="text-[11px] text-textSecondary">{remaining} more available</span>

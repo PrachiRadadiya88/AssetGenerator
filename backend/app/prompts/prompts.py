@@ -26,6 +26,21 @@ EMOJI_EXCLUDE = (
 )
 
 # ─────────────────────────────────────────────
+# BACKGROUND CONSISTENCY CONSTANTS
+# ─────────────────────────────────────────────
+
+BACKGROUND_CONSISTENT = (
+    "STRICT BACKGROUND REQUIREMENT: The ENTIRE background area of the canvas must be filled with a solid or gradient "
+    "using the {color_theme} exclusively. Do NOT use white or split backgrounds. Every pixel of the background should "
+    "be branded with {color_theme}."
+)
+
+BACKGROUND_VARIED = (
+    "You have creative freedom for the background: you may use either a full {color_theme} background, "
+    "or a modern split layout with part white and part {color_theme} for visual variety."
+)
+
+# ─────────────────────────────────────────────
 # HEADLINE GENERATION PROMPT
 # ─────────────────────────────────────────────
 
@@ -169,7 +184,7 @@ FEATURE HIGHLIGHT (subtle but clear):
 - The highlight must feel natural and integrated, NOT like a red circle annotation
 
 OVERALL STYLE:
-- {color_theme} background (vibrant, saturated)
+- {background_instruction}
 - Canvas size: {width}x{height} pixels (portrait)
 - Quality level: indistinguishable from Messenger, Spotify, Notion, or Duolingo Play Store screenshots
 - Premium, clean, eye-catching — the kind of image that stops users scrolling
@@ -277,7 +292,7 @@ LAYOUT COMPOSITION:
    - The phone screen must show a premium {app_category} UI that demonstrates: {headline}
    - Pop key elements out of the screen for 3D depth (floating cards, icons).
    - Bottom of the phone bleeds off the bottom edge.
-3. BACKGROUND: Rich, vibrant {color_theme} color filling the entire canvas.
+3. BACKGROUND: {background_instruction}
 
 VISUAL ELEMENTS & EMOJI:
 - {include_emoji}
@@ -336,7 +351,7 @@ PHONE SCREEN UI:
 - The screen must look like a real, polished, shipping app
 
 OVERALL STYLE:
-- {color_theme} background (vibrant, saturated)
+- {background_instruction}
 - Premium quality matching top Play Store apps
 - Clean, eye-catching, scroll-stopping
 
@@ -537,7 +552,12 @@ APP CONTEXT:
 - Category: {app_category}
 - Target Audience: {target_audience}
 - Brand Style: {brand_style}
-- Core Features: {features_list}
+- User-Provided Description: {app_description}
+- Core Features:
+{features_list}
+
+STRICT EMOJI RULE:
+{emoji_instruction}
 
 YOUR TASK:
 Generate two parts of the listing:
@@ -548,7 +568,7 @@ Generate two parts of the listing:
    - Must hook the user immediately.
 
 2. FULL DESCRIPTION (optimized for engagement and SEO):
-   - Introduction (2-3 sentences): Hook the user with the core problem/solution.
+   - Introduction (2-3 sentences): Hook the user with the core problem/solution. Use the User-Provided Description as a base if it contains specific details.
    - Key Benefits/Features (bullet points): Use the provided features list to create engaging, benefit-focused bullet points (e.g. "🚀 Feature Name: The user benefit").
    - Detailed Explanation (1-2 paragraphs): Expand on the app's value.
    - Social Proof/Trust (optional but good).

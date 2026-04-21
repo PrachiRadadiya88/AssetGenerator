@@ -40,6 +40,7 @@ class AddAssetRequest(BaseModel):
     use_raw_features: bool = False
     include_emojis: bool = True
     size: str = "1080x1920"
+    consistent_background: bool = True
 
 
 class AddAssetResponse(BaseModel):
@@ -95,6 +96,7 @@ class AddAdRequest(BaseModel):
     features: list[str] = Field(default_factory=list)
     existing_asset_keys: list[str] = Field(default_factory=list)
     existing_ad_hooks: list[str] = Field(default_factory=list)
+    consistent_background: bool = True
 
 
 class AddAdResponse(BaseModel):
@@ -117,6 +119,8 @@ class GenerateDescriptionRequest(BaseModel):
     target_audience: str
     brand_style: str
     features: list[str]
+    app_description: Optional[str] = ""
+    include_emojis: bool = True
 
 class AppDescriptionResponse(BaseModel):
     short_description: str
@@ -141,6 +145,7 @@ class RegenerateAssetRequest(BaseModel):
     size: str = "1080x1920"
     existing_headline: Optional[str] = None
     existing_subtext: Optional[str] = None
+    consistent_background: bool = True
 
 class ScrapePlayStoreRequest(BaseModel):
     url: str
