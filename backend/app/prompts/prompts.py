@@ -154,6 +154,9 @@ THE FEATURE TO SHOWCASE: "{feature}"
 CANVAS: {width}x{height} pixels (portrait orientation).
 
 MANDATORY HARD-CONSTRAINTS (CRITICAL):
+- STRICT LANGUAGE REQUIREMENT: The entire image, including the headline "{headline}", subtext "{subtext}", and ALL UI elements inside the phone mockup, MUST be written in the following language: {language}. 
+- ZERO ENGLISH TOLERANCE: DO NOT use any English words anywhere in the image (except for universal symbols like 'Aa' or '...'). Even if the app name "{app_name}" is in English, you MUST translate it or represent it in {language} characters. 
+- All names, buttons, labels, and small text inside the app mockup MUST be in {language}.
 - STRICT DEVICE IDENTITY: You MUST follow these hardware specifications: {os_details}
 - NO-OVERLAP RULE: The typography MUST be confined to the top 25% of the canvas. It MUST NOT touch, hide behind, or overlap the phone mockup.
 - DYNAMIC TEXT SCALING: Reduce font size for headlines "{headline}" longer than 5 words to keep them in the top section.
@@ -186,6 +189,8 @@ DEVICE PRESENTATION (VERY IMPORTANT — follow this exactly):
 - IMPORTANT: The physical device MUST be clearly identifiable as {target_os} using these details: {os_details}
 - STRICT DEVICE IDENTITY: NO MIXING BRANDS. If {target_os} is Android, DO NOT use an iPhone. If {target_os} is iOS, DO NOT use an Android. You MUST follow the hardware details of {target_os} strictly.
 - The screen UI MUST explicitly demonstrate the functionality described in: {headline}
+- ALL text on the screen (buttons, menus, content, names, labels) MUST be in: {language}
+- TRANSLATE EVERYTHING: Any text that would normally be in English (like "Settings", "Profile", "Shared Album") MUST be translated into {language}.
 - Include a status bar (time, battery, signal icons) at the top in the exact style of {target_os}.
 - Use real, meaningful content — NO placeholder text, NO lorem ipsum
 - Create dynamic visual depth: pop key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of phone bezel)
@@ -294,6 +299,8 @@ THE FEATURE TO SHOWCASE: "{feature}"
 CANVAS: {width}x{height} pixels (landscape orientation).
 
 MANDATORY HARD-CONSTRAINTS (Banner Layout):
+- STRICT LANGUAGE REQUIREMENT: All text in the banner (headline, subtext, and phone UI) MUST be written in: {language}.
+- ZERO ENGLISH TOLERANCE: No English words allowed anywhere. Translate all UI labels and app names into {language}.
 - STRICT DEVICE IDENTITY: You MUST follow these hardware specifications: {os_details}
 - 60/40 SPLIT RULE: The left 60% is for TEXT ONLY. The right 40% is for the DEVICE ONLY. 
 - NO-OVERLAP: The text in the left block MUST NOT cross into the right block or touch the phone mockup.
@@ -314,6 +321,8 @@ LAYOUT COMPOSITION:
     - STRICT DEVICE IDENTITY: If {target_os} is Android, DO NOT use an iPhone or Dynamic Island. Use a centered punch-hole camera and symmetric bezels.
     - POSITION: Keep the phone strictly within the right 40% of the banner.
     - The phone screen must show a premium {app_category} UI that demonstrates: {headline}
+    - ALL screen UI text (including names, menus, and labels) must be in: {language}
+    - ZERO ENGLISH TOLERANCE: No English text on the screen.
     - The typography MUST NOT overlap with the phone mockup.
     - Pop key elements out of the screen for 3D depth (floating cards, icons).
     - Bottom of the phone bleeds off the bottom edge.
@@ -335,6 +344,11 @@ QUALITY:
 - Saturated, premium, clean.
 
 DO NOT INCLUDE: landscape-oriented phones, wireframes, watermarks, download buttons, store badges, font names as visible text, or any text other than the headline and optional line below it.
+
+FINAL LANGUAGE ENFORCEMENT (CRITICAL):
+- EVERY PIECE OF TEXT IN THE ENTIRE IMAGE MUST BE IN: {language}
+- ZERO ENGLISH TOLERANCE: No English words allowed anywhere.
+- TRANSLATE ALL UI LABELS, APP NAMES, AND DESCRIPTIONS INTO {language}.
 """
 
 # ─────────────────────────────────────────────
@@ -348,7 +362,9 @@ THE FEATURE TO SHOWCASE: "{feature}"
 
 CANVAS: {width}x{height} pixels.
 
-IMPORTANT — SCREENSHOT USAGE:
+IMPORTANT — SCREENSHOT USAGE & LANGUAGE:
+- STRICT LANGUAGE REQUIREMENT: All text in the generated image (headline, subtext, and recreated UI) MUST be in: {language}.
+- ZERO ENGLISH TOLERANCE: Translate everything, including names and labels that are in English in the original screenshot.
 - Do NOT copy/paste the screenshot directly. Study its color palette, layout structure, UI patterns, and visual style.
 - Reimagine and recreate the UI as a significantly more polished, premium version inside the phone mockup.
 - Preserve the app's real design language and colors, but elevate spacing, typography, and visual hierarchy.
@@ -378,6 +394,7 @@ PHONE SCREEN UI:
 - IMPORTANT: The physical {target_os} device MUST be clearly identifiable from these details: {os_details}
 - STRICT DEVICE IDENTITY: NO MIXING BRANDS. If {target_os} is Android, DO NOT use an iPhone. If {target_os} is iOS, DO NOT use an Android. You MUST follow the hardware details of {target_os} strictly.
 - The screen must explicitly demonstrate: {headline}
+- ALL text on the screen MUST be in: {language}
 - Create dynamic visual depth by popping key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of the phone bezel)
 - Include status bar (time, battery, signal icons) in the exact style of {target_os}.
 - All content must be realistic — NO placeholder text
@@ -486,7 +503,9 @@ YOU MUST USE THIS EXACT CREATIVE STYLE:
 
 {ad_style}
 
-TEXT RULES:
+TEXT & LANGUAGE RULES:
+- STRICT LANGUAGE REQUIREMENT: All text in the ad (hook, headline, and phone UI) MUST be written in: {language}.
+- ZERO ENGLISH TOLERANCE: No English text anywhere. Translate all UI labels and brand names into {language}.
 - Display this exact text as the hook (small): {hook}
 - Display this exact text as the headline (large, bold): {headline}
 - DO NOT add any extra words, labels, introductions, font names, or quotes.
@@ -506,6 +525,11 @@ CRITICAL DESIGN RULES:
 10. DO NOT display font names, labels, or instruction text as visible content
 
 OUTPUT: A single 1080x1080 high-quality ad creative image.
+
+FINAL LANGUAGE ENFORCEMENT (CRITICAL):
+- EVERY PIECE OF TEXT IN THE ENTIRE IMAGE MUST BE IN: {language}
+- ZERO ENGLISH TOLERANCE: No English words allowed anywhere.
+- TRANSLATE ALL UI LABELS, BRAND NAMES, AND DESCRIPTIONS INTO {language}.
 """
 
 # ─────────────────────────────────────────────

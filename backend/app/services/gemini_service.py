@@ -239,6 +239,7 @@ async def generate_asset_image(
     subtext: str | None = None,
     include_emojis: bool = True,
     consistent_background: bool = True,
+    language: str = "English",
 ) -> str:
     """
     Generate an image using Gemini's experimental imagen-3.0-generate-002 model.
@@ -283,6 +284,7 @@ async def generate_asset_image(
             text_color=text_color,
             subtext=subtext_val,
             background_instruction=bg_instruction,
+            language=language,
         )
         contents = prompt
     elif uploaded_image_path and os.path.exists(uploaded_image_path):
@@ -304,6 +306,7 @@ async def generate_asset_image(
             text_color=text_color,
             subtext=subtext_val,
             background_instruction=bg_instruction,
+            language=language,
         )
         
         # Read the uploaded image
@@ -340,6 +343,7 @@ async def generate_asset_image(
             text_color=text_color,
             subtext=subtext_val,
             background_instruction=bg_instruction,
+            language=language,
         )
         contents = prompt
 
@@ -470,6 +474,7 @@ async def generate_ad_image(
     target_audience: str = "",
     target_os: str = "iOS",
     ad_index: int = 0,
+    language: str = "English",
 ) -> str:
     """Generate the background/base image for an ad using Gemini."""
     client = _get_client()
@@ -501,6 +506,7 @@ async def generate_ad_image(
         asset_context=asset_context,
         uploaded_screenshots=uploaded_screenshots,
         ad_style=ad_style,
+        language=language,
     )
 
     contents = []

@@ -239,6 +239,7 @@ async def generate_assets(
                     subtext=feature.subtext,
                     include_emojis=include_emojis,
                     consistent_background=consistent_background,
+                    language=language,
                 )
                 success = True
                 break  # Success, exit retry loop
@@ -357,6 +358,7 @@ async def add_asset(request: AddAssetRequest):
                 subtext=feature.subtext,
                 include_emojis=request.include_emojis,
                 consistent_background=request.consistent_background,
+                language=request.language,
             )
             success = True
             break  # Success
@@ -447,7 +449,7 @@ def _get_generated_screenshots(session_dir: str) -> list[str]:
     ])
 
 
-async def _compose_single_ad(request_data: dict, ad, session_dir: str, screenshot_path: str | None, ad_index: int = 0) -> bool:
+async def _compose_single_ad(request_data: dict, ad, session_dir: str, screenshot_path: str | None, ad_index: int = 0, language: str = "English") -> bool:
     """Generate image and compose a single ad creative. Returns True if successful."""
     bg_path = os.path.join(session_dir, f"{ad.id}_bg.png")
     final_path = os.path.join(session_dir, f"{ad.id}_final.png")
@@ -467,6 +469,7 @@ async def _compose_single_ad(request_data: dict, ad, session_dir: str, screensho
                 target_audience=request_data.get("target_audience", ""),
                 target_os=request_data.get("target_os", "iOS"),
                 ad_index=ad_index,
+                language=language,
             )
             success = True
             break
@@ -543,7 +546,7 @@ async def generate_ads(request: GenerateAdsRequest):
     async def process_ad(i, ad):
         screenshot_path = screenshots[i % len(screenshots)] if screenshots else None
         try:
-            success = await _compose_single_ad(request_data, ad, session_dir, screenshot_path, ad_index=i)
+            success = await _compose_single_ad(request_data, ad, session_dir, screenshot_path, ad_index=i, language=request.language)
             if success:
                 return ad
         except Exception as e:
@@ -615,7 +618,7 @@ async def add_ad(request: AddAdRequest):
     }
 
     try:
-        success = await _compose_single_ad(request_data, ad, session_dir, screenshot_path, ad_index=next_num)
+        success = await _compose_single_ad(request_data, ad, session_dir, screenshot_path, ad_index=next_num, language=request.language)
         if not success:
             raise HTTPException(status_code=500, detail="AI image generation failed due to high demand. Please try again.")
     except Exception as e:
@@ -714,6 +717,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
                 subtext=feature_data.subtext,
                 include_emojis=request.include_emojis,
                 consistent_background=request.consistent_background,
+                language=request.language,
             )
             success = True
             break

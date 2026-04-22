@@ -78,6 +78,7 @@ class GenerateAdsRequest(BaseModel):
     features: list[str] = Field(default_factory=list)
     existing_asset_keys: list[str] = Field(default_factory=list)
     existing_ad_hooks: list[str] = Field(default_factory=list)
+    language: str = "English"
 
 
 class GenerateAdsResponse(BaseModel):
@@ -98,6 +99,7 @@ class AddAdRequest(BaseModel):
     existing_asset_keys: list[str] = Field(default_factory=list)
     existing_ad_hooks: list[str] = Field(default_factory=list)
     consistent_background: bool = True
+    language: str = "English"
 
 
 class AddAdResponse(BaseModel):
@@ -123,6 +125,7 @@ class GenerateDescriptionRequest(BaseModel):
     features: list[str]
     app_description: Optional[str] = ""
     include_emojis: bool = True
+    language: str = "English"
 
 class AppDescriptionResponse(BaseModel):
     short_description: str
