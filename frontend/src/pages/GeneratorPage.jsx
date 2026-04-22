@@ -11,7 +11,6 @@ import { useAssets } from '../hooks/useAssets';
 import AppForm from '../components/AppForm';
 import ScreenshotUploader from '../components/ScreenshotUploader';
 import AssetGrid from '../components/AssetGrid';
-import AddAssetButton from '../components/AddAssetButton';
 import DownloadButton from '../components/DownloadButton';
 import Loader from '../components/Loader';
 
@@ -38,8 +37,8 @@ export default function GeneratorPage() {
     });
   };
 
-  const handleAddMore = async () => {
-    await addMore();
+  const handleAddMore = async (chosenOrientation) => {
+    await addMore(chosenOrientation);
   };
 
   const handleReset = () => {
@@ -145,18 +144,47 @@ export default function GeneratorPage() {
                 {/* Asset Grid */}
                 <AssetGrid assets={assets} orientation={orientation} />
 
-                {/* Add More */}
-                <div className="flex items-center gap-4 pt-4 border-t border-primary/10">
-                  <AddAssetButton
-                    onClick={handleAddMore}
-                    isLoading={isAddingMore}
-                    disabled={isGenerating}
-                  />
-                  {isAddingMore && (
-                    <span className="text-xs text-textSecondary animate-pulse-soft">
-                      AI is crafting a unique new asset...
-                    </span>
-                  )}
+                {/* Add More Section */}
+                <div className="pt-8 border-t border-primary/10">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-sm font-bold text-textPrimary mr-2 uppercase tracking-wider text-[11px]">Add New:</span>
+                      
+                      <button
+                        onClick={() => handleAddMore('portrait')}
+                        disabled={isAddingMore}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-primary/10 rounded-lg text-xs font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                      >
+                        <div className="w-2 h-3 rounded-sm border-2 border-primary/40" />
+                        + Portrait
+                      </button>
+
+                      <button
+                        onClick={() => handleAddMore('landscape')}
+                        disabled={isAddingMore}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-primary/10 rounded-lg text-xs font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                      >
+                        <div className="w-3 h-2 rounded-sm border-2 border-primary/40" />
+                        + Landscape
+                      </button>
+
+                      <button
+                        onClick={() => handleAddMore('square')}
+                        disabled={isAddingMore}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-primary/10 rounded-lg text-xs font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                      >
+                        <div className="w-2.5 h-2.5 rounded-sm border-2 border-primary/40" />
+                        + Square
+                      </button>
+                    </div>
+
+                    {isAddingMore && (
+                      <div className="flex items-center gap-3 text-xs text-textSecondary animate-pulse-soft">
+                        <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                        <span>AI is crafting a unique new asset...</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

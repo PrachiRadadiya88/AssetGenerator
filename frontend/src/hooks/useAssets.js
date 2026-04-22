@@ -114,7 +114,7 @@ export function useAssets() {
   /**
    * Add one more unique asset.
    */
-  const addMore = useCallback(async () => {
+  const addMore = useCallback(async (chosenOrientation = null) => {
     if (!state.sessionId || !state.appDetails) return;
 
     dispatch({ type: ActionTypes.ADD_START });
@@ -125,6 +125,14 @@ export function useAssets() {
       const nextFeatureIndex = state.assets.length % (features.length || 1);
       const targetFeature = features[nextFeatureIndex] || 'Core Feature';
 
+      // Use chosen orientation or default to original
+      const orientation = chosenOrientation || state.appDetails.orientation || 'portrait';
+      
+      // Determine size based on orientation
+      let targetSize = state.appDetails.portraitSize || '1080x1920';
+      if (orientation === 'landscape') targetSize = state.appDetails.landscapeSize || '1920x1080';
+      if (orientation === 'square') targetSize = state.appDetails.squareSize || '1080x1080';
+
       const result = await apiAddAsset({
         sessionId: state.sessionId,
         appName: state.appDetails.appName,
@@ -132,8 +140,15 @@ export function useAssets() {
         brandStyle: state.appDetails.brandStyle || '',
         appCategory: state.appDetails.appCategory,
         colorTheme: state.appDetails.colorTheme,
-        orientation: state.appDetails.orientation,
+        orientation: orientation,
+        targetOs: state.appDetails.targetOs,
+        includeSubtext: state.appDetails.includeSubtext,
+        useRawFeatures: state.appDetails.useRawFeatures,
+        includeEmojis: state.appDetails.includeEmojis,
         targetFeature: targetFeature,
+        size: targetSize,
+        consistentBackground: state.appDetails.consistentBackground,
+        language: state.appDetails.language,
       });
       dispatch({ type: ActionTypes.ADD_SUCCESS, payload: result.asset });
       return result.asset;

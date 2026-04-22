@@ -52,6 +52,7 @@ export const generateAssets = async ({
   useRawFeatures,
   includeEmojis,
   consistentBackground = true,
+  language = 'English',
   screenshots,
   targetOs = 'iOS',
 }) => {
@@ -74,6 +75,7 @@ export const generateAssets = async ({
   formData.append('use_raw_features', useRawFeatures);
   formData.append('include_emojis', includeEmojis);
   formData.append('consistent_background', consistentBackground);
+  formData.append('language', language);
 
   // Append screenshots if provided
   if (screenshots && screenshots.length > 0) {
@@ -118,6 +120,7 @@ export async function addAsset({
   existingHeadlines = [],
   size = '1080x1920',
   consistentBackground = true,
+  language = 'English',
 }) {
   const payload = {
     session_id: sessionId,
@@ -135,6 +138,7 @@ export async function addAsset({
     existing_headlines: existingHeadlines,
     size: size,
     consistent_background: consistentBackground,
+    language: language,
   };
 
   const response = await api.post('/add-asset', payload);
@@ -310,7 +314,7 @@ export async function addAdCreative({
 }) {
   const response = await api.post('/add-ad', {
     session_id: sessionId,
-    app_name: app_name,
+    app_name: appName,
     target_audience: targetAudience,
     brand_style: brandStyle,
     app_category: appCategory,
@@ -327,9 +331,10 @@ export async function addAdCreative({
 export async function generateFeaturesList({
   appName,
   appCategory,
-  targetAudience = '',
-  brandStyle = '',
+  targetAudience,
+  brandStyle,
   appDescription,
+  language = 'English',
 }) {
   const response = await api.post('/generate-features-list', {
     app_name: appName,
@@ -337,8 +342,9 @@ export async function generateFeaturesList({
     target_audience: targetAudience,
     brand_style: brandStyle,
     app_description: appDescription,
+    language: language,
   });
-  return response.data;
+  return response.data.features;
 }
 
 export async function regenerateAsset({
@@ -361,6 +367,7 @@ export async function regenerateAsset({
   existing_headline = null,
   existing_subtext = null,
   consistentBackground = true,
+  language = 'English',
 }) {
   const response = await api.post('/regenerate-asset', {
     session_id: sessionId,
@@ -382,6 +389,7 @@ export async function regenerateAsset({
     existing_headline: existing_headline,
     existing_subtext: existing_subtext,
     consistent_background: consistentBackground,
+    language: language,
   });
   return response.data;
 }
@@ -400,11 +408,12 @@ export async function regenerateAsset({
 export async function generatePlayStoreDescription({
   appName,
   appCategory,
-  targetAudience = '',
-  brandStyle = '',
-  features = [],
+  targetAudience,
+  brandStyle,
+  features,
   appDescription = '',
   includeEmojis = true,
+  language = 'English',
 }) {
   const response = await api.post('/generate-play-store-description', {
     app_name: appName,
@@ -414,6 +423,7 @@ export async function generatePlayStoreDescription({
     features: features,
     app_description: appDescription,
     include_emojis: includeEmojis,
+    language: language,
   });
 
   return response.data;

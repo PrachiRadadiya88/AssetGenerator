@@ -134,6 +134,7 @@ def compose_asset(
     output_path: str = "output.png",
     target_width: int | None = None,
     target_height: int | None = None,
+    text_color: str | None = None,
 ) -> str:
     """
     Compose a final Play Store screenshot asset.
@@ -165,6 +166,13 @@ def compose_asset(
         width, height = PORTRAIT_SIZE
 
     accent_rgb = _hex_to_rgb(color_theme)
+    
+    # Calculate luminance to decide on text color if not provided
+    if not text_color:
+        luminance = (0.299 * accent_rgb[0] + 0.587 * accent_rgb[1] + 0.114 * accent_rgb[2]) / 255
+        text_rgb = (255, 255, 255, 255) if luminance < 0.55 else (26, 26, 26, 255)
+    else:
+        text_rgb = _hex_to_rgb(text_color) + (255,)
 
     # ─── Check AI Generated ───
     if ai_generated_path and os.path.exists(ai_generated_path):
@@ -272,7 +280,7 @@ def compose_asset(
             (x_pos, y_cursor),
             line,
             font=headline_font,
-            fill=(255, 255, 255, 255),
+            fill=text_rgb,
         )
         y_cursor += (line_bbox[3] - line_bbox[1]) + int(headline_size * 0.3)
     # ─── Save final image ───

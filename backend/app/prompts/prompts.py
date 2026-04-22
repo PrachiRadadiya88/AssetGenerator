@@ -59,6 +59,7 @@ App Name: {app_name}
 App Category: {app_category}
 Target Audience: {target_audience}
 Brand Style: {brand_style}
+Language: {language}
 
 Feature to Highlight (use this exactly): {feature_concept}
 
@@ -73,6 +74,7 @@ HEADLINE RULES:
 3. Tone: Must match Brand Style: {brand_style}
 4. No secondary text, no colon, no periods, no explanations
 5. Must directly relate to: {feature_concept}
+6. MUST BE WRITTEN IN THIS LANGUAGE: {language}
 
 Output ONLY the headline text — no quotes, no extra formatting, no explanation.
 """
@@ -94,6 +96,7 @@ App Name: {app_name}
 App Category: {app_category}
 Target Audience: {target_audience}
 Brand Style: {brand_style}
+Language: {language}
 Initial Request/Context: {feature_concept}
 
 HEADLINE RULES:
@@ -101,6 +104,7 @@ HEADLINE RULES:
 2. Style: Bold, punchy, immediate value communication. Usually the primary tagline of the app.
 3. Tone: Must match Brand Style: {brand_style}
 4. No secondary text, no colon, no periods, no explanations
+5. MUST BE WRITTEN IN THIS LANGUAGE: {language}
 
 Output ONLY the headline text — no quotes, no extra formatting, no explanation.
 """
@@ -129,9 +133,13 @@ App Name: {app_name}
 Category: {app_category}
 Target Audience: {target_audience}
 Brand Style: {brand_style}
+Language: {language}
 
 App Description:
 {app_description}
+
+OUTPUT LANGUAGE RULE:
+- ALL generated features MUST be written in this language: {language}.
 """
 
 # ─────────────────────────────────────────────
@@ -145,19 +153,28 @@ THE FEATURE TO SHOWCASE: "{feature}"
 
 CANVAS: {width}x{height} pixels (portrait orientation).
 
+MANDATORY HARD-CONSTRAINTS (CRITICAL):
+- STRICT DEVICE IDENTITY: You MUST follow these hardware specifications: {os_details}
+- NO-OVERLAP RULE: The typography MUST be confined to the top 25% of the canvas. It MUST NOT touch, hide behind, or overlap the phone mockup.
+- DYNAMIC TEXT SCALING: Reduce font size for headlines "{headline}" longer than 5 words to keep them in the top section.
+- PROHIBITED ELEMENTS: No Apple logos, no pill-shaped cutouts (if Android), no watermarks.
+
 LAYOUT INSTRUCTIONS (Top to Bottom):
 1. Upper Section (top 25-30% of the canvas):
    - Background: {color_theme} color theme, vibrant and saturated.
    - Display this exact text: {headline}
    - CRITICAL: Do NOT write words like "HEADLINE BANNER" or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
-   - The text must be massive, bold, and dominant — but it MUST be fully contained within the canvas.
+   - The text must be massive, bold, and dominant.
+   - NO-OVERLAP RULE: The text MUST be confined to the top 25-30% of the canvas. It MUST NOT touch or hide behind the phone mockup.
+   - DYNAMIC TEXT SCALING: If the headline "{headline}" is long (more than 5 words), reduce the font size to ensure it fits perfectly with generous padding.
    - ENSURE there is generous padding (at least 60px) between the text and all edges of the image.
    - DO NOT cut off any letters or words. If the headline is long, use multiple lines within the upper section.
-   - Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
+   - Color: You MUST use {text_color} (Hex Code) for every single character of the text. This is a STRICT BRANDING REQUIREMENT.
    - Left-aligned with generous padding.
    - If the following line is not empty, display it directly below the headline in a smaller, lighter weight: {subtext}
    - The smaller text must use the same color as the headline.
+   - The subtext must also scale down if the headline is long.
 2. {include_emoji}
 3. Lower Section (bottom 65-70% of the canvas):
 
@@ -165,10 +182,9 @@ DEVICE PRESENTATION (VERY IMPORTANT — follow this exactly):
 {mockup_style}
 
 {target_os} SCREEN UI REQUIREMENTS (if a phone is required by the style above):
-- Design a realistic, production-quality mobile app screen for a {app_category} app perfectly fitted to a {target_os} phone.
-- IMPORTANT: The physical {target_os} device MUST be clearly identifiable. 
-  - For iOS: Use the latest iPhone style with the Dynamic Island and rounded screen corners.
-  - For Android: Use a modern flagship style with a small centered punch-hole camera and slim symmetric bezels.
+- Design a realistic, production-quality mobile app screen for a {app_category} app perfectly fitted to the specified {target_os} hardware.
+- IMPORTANT: The physical device MUST be clearly identifiable as {target_os} using these details: {os_details}
+- STRICT DEVICE IDENTITY: NO MIXING BRANDS. If {target_os} is Android, DO NOT use an iPhone. If {target_os} is iOS, DO NOT use an Android. You MUST follow the hardware details of {target_os} strictly.
 - The screen UI MUST explicitly demonstrate the functionality described in: {headline}
 - Include a status bar (time, battery, signal icons) at the top in the exact style of {target_os}.
 - Use real, meaningful content — NO placeholder text, NO lorem ipsum
@@ -277,6 +293,12 @@ THE FEATURE TO SHOWCASE: "{feature}"
 
 CANVAS: {width}x{height} pixels (landscape orientation).
 
+MANDATORY HARD-CONSTRAINTS (Banner Layout):
+- STRICT DEVICE IDENTITY: You MUST follow these hardware specifications: {os_details}
+- 60/40 SPLIT RULE: The left 60% is for TEXT ONLY. The right 40% is for the DEVICE ONLY. 
+- NO-OVERLAP: The text in the left block MUST NOT cross into the right block or touch the phone mockup.
+- PROHIBITED: If {target_os} is Android, NO Apple branding, no "Notch", no pill cutouts. If {target_os} is iOS, NO Android branding.
+
 LAYOUT COMPOSITION:
 1. Left Block (60% of canvas) — Marketing text area:
    - Display this exact text as the headline: {headline}
@@ -285,13 +307,22 @@ LAYOUT COMPOSITION:
    - The headline must be massive, bold, and dominant, yet FULLY VISIBLE and NOT clipped by any edges.
    - Keep it within the left 60% block with comfortable padding from the top and left edges.
    - If the following line is not empty, display it directly below the headline in a smaller, lighter weight: {subtext}
-   - Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
+   - Color: You MUST use {text_color} (Hex Code) for the text. This is a hard constraint for brand consistency.
    - Left-aligned with generous padding.
 2. Right Block (40% of canvas) — Device area:
-   - Place ONE perfectly vertical (PORTRAIT orientation) {target_os} smartphone mockup.
-   - The phone screen must show a premium {app_category} UI that demonstrates: {headline}
-   - Pop key elements out of the screen for 3D depth (floating cards, icons).
-   - Bottom of the phone bleeds off the bottom edge.
+    - Place ONE perfectly vertical (PORTRAIT orientation) {target_os} smartphone mockup.
+    - STRICT DEVICE IDENTITY: If {target_os} is Android, DO NOT use an iPhone or Dynamic Island. Use a centered punch-hole camera and symmetric bezels.
+    - POSITION: Keep the phone strictly within the right 40% of the banner.
+    - The phone screen must show a premium {app_category} UI that demonstrates: {headline}
+    - The typography MUST NOT overlap with the phone mockup.
+    - Pop key elements out of the screen for 3D depth (floating cards, icons).
+    - Bottom of the phone bleeds off the bottom edge.
+
+MANDATORY TEXT BOUNDARIES (Landscape):
+- SAFE-ZONE: The headline {headline} MUST be confined to the horizontal range of 5% to 55% of the canvas width. 
+- LINE WRAPPING: If the headline is long, wrap it into 2 or 3 lines to ensure it never touches the right-side device mockup.
+- NO CLIPPING: No part of any letter should be hidden behind the phone or cut off by the left/top edges.
+- Use a maximum font size that leaves at least 150px of empty space between the end of the text and the phone frame.
 3. BACKGROUND: {background_instruction}
 
 VISUAL ELEMENTS & EMOJI:
@@ -328,10 +359,14 @@ LAYOUT INSTRUCTIONS (Top to Bottom):
    - Display this exact text: {headline}
    - CRITICAL: Do NOT write words like "HEADLINE BANNER" or "PHONE MOCKUP" anywhere in the image.
    - DO NOT add any extra words, labels, introductions, font names, or quotes. Only the exact words above.
-   - The text must be massive, bold, and dominant.
-   - Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
+   - The text must be massive, bold, and modern.
+   - NO-OVERLAP RULE: The text MUST be confined to the top 25-30% of the canvas. It MUST NOT touch or hide behind the phone mockup.
+   - DYNAMIC TEXT SCALING: If the headline "{headline}" is long (more than 5 words), reduce the font size to ensure it fits perfectly with generous padding.
+   - ENSURE there is generous padding (at least 60px) between the text and all edges.
+   - Color: You MUST use {text_color} (Hex Code) for the branding text. This is a critical consistency requirement.
    - If the following line is not empty, display it directly below the headline in a smaller, lighter weight: {subtext}
    - The smaller text must use the same color as the headline.
+   - The subtext must also scale down if the headline is long.
 2. {include_emoji}
 3. Lower Section (bottom 65-70%):
 
@@ -340,9 +375,8 @@ DEVICE PRESENTATION (VERY IMPORTANT — follow this exactly):
 
 PHONE SCREEN UI:
 - Based on the uploaded screenshot's design language but elevated to premium quality.
-- IMPORTANT: The physical {target_os} device MUST be clearly identifiable. 
-  - For iOS: Use the latest iPhone style with the Dynamic Island and rounded screen corners.
-  - For Android: Use a modern flagship style with a small centered punch-hole camera and slim symmetric bezels.
+- IMPORTANT: The physical {target_os} device MUST be clearly identifiable from these details: {os_details}
+- STRICT DEVICE IDENTITY: NO MIXING BRANDS. If {target_os} is Android, DO NOT use an iPhone. If {target_os} is iOS, DO NOT use an Android. You MUST follow the hardware details of {target_os} strictly.
 - The screen must explicitly demonstrate: {headline}
 - Create dynamic visual depth by popping key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of the phone bezel)
 - Include status bar (time, battery, signal icons) in the exact style of {target_os}.
@@ -456,7 +490,7 @@ TEXT RULES:
 - Display this exact text as the hook (small): {hook}
 - Display this exact text as the headline (large, bold): {headline}
 - DO NOT add any extra words, labels, introductions, font names, or quotes.
-- Color: Use white (#FFFFFF) if {color_theme} is dark/vibrant. Use black (#1A1A1A) if {color_theme} is light/white.
+- Color: You MUST use {text_color} (Hex Code) for the text. NO EXCEPTIONS.
 
 CRITICAL DESIGN RULES:
 
@@ -552,6 +586,7 @@ APP CONTEXT:
 - Category: {app_category}
 - Target Audience: {target_audience}
 - Brand Style: {brand_style}
+- Output Language: {language}
 - User-Provided Description: {app_description}
 - Core Features:
 {features_list}
@@ -573,17 +608,21 @@ Generate two parts of the listing:
    - Detailed Explanation (1-2 paragraphs): Expand on the app's value.
    - Social Proof/Trust (optional but good).
    - Call to Action (CTA).
+   - Natural incorporation of the core features and keywords.
+   - Clean formatting: use bullet points or short paragraphs for readability.
+   - Play Store style formatting is encouraged (e.g. bolding key phrases or using emojis).
 
 STRICT OUTPUT RULE:
 - Return ONLY a JSON object with the following keys:
   - "short_description": (string, max 80 chars)
   - "full_description": (string, markdown formatted for the full listing)
+  - ENTIRE DESCRIPTION MUST BE WRITTEN IN: {language}
 
-DO NOT use markdown backticks in the root output. Return raw JSON.
+RETURN ONLY THE JSON. No introduction, no markdown backticks, no markdown blocks. Just valid JSON.
 
 Output Format Example:
-{{
+{
   "short_description": "The easiest way to track your daily goals and stay productive.",
   "full_description": "Are you struggling with productivity?...\\n\\nKey Features:\\n- ✅ Smart Tracking: ...\\n- ☁️ Cloud Sync: ..."
-}}
+}
 """

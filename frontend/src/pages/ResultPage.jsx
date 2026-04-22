@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowLeft, AlertCircle, X, Megaphone, Loader2, Plus, RotateCw } from 'lucide-react';
 import { addAsset, generateAds, addAdCreative, regenerateAsset } from '../services/api';
 import AssetGrid from '../components/AssetGrid';
-import AddAssetButton from '../components/AddAssetButton';
 import DownloadButton from '../components/DownloadButton';
 import AdCard from '../components/AdCard';
 
@@ -36,7 +35,7 @@ export default function ResultPage() {
     setAppDetails(location.state.appDetails);
   }, [location, navigate]);
 
-  const handleAddMore = async () => {
+  const handleAddMore = async (chosenOrientation = 'portrait') => {
     if (!sessionId || !appDetails) return;
     setIsAddingMore(true);
     setError(null);
@@ -45,6 +44,11 @@ export default function ResultPage() {
     const totalFeatures = appDetails.features.length;
     const nextFeatureIndex = assets.length % totalFeatures;
     const targetFeature = appDetails.features[nextFeatureIndex];
+
+    // Select size based on chosen orientation
+    let targetSize = appDetails.portraitSize || '1080x1920';
+    if (chosenOrientation === 'landscape') targetSize = appDetails.landscapeSize || '1920x1080';
+    if (chosenOrientation === 'square') targetSize = appDetails.squareSize || '1080x1080';
 
     try {
       const result = await addAsset({
@@ -56,14 +60,15 @@ export default function ResultPage() {
         brandStyle: appDetails.brandStyle,
         appCategory: appDetails.appCategory,
         colorTheme: appDetails.colorTheme,
-        orientation: 'portrait',
+        orientation: chosenOrientation,
         targetOs: appDetails.targetOs,
         includeSubtext: appDetails.includeSubtext,
         useRawFeatures: appDetails.useRawFeatures,
         includeEmojis: appDetails.includeEmojis,
         targetFeature: targetFeature,
-        size: appDetails.portraitSize || '1080x1920',
+        size: targetSize,
         consistentBackground: appDetails.consistentBackground,
+        language: appDetails.language,
       });
       const newAssets = [...assets, result.asset];
       setAssets(newAssets);
@@ -184,6 +189,7 @@ export default function ResultPage() {
         existing_headline: asset.headline,
         existing_subtext: asset.subtext,
         consistentBackground: appDetails.consistentBackground,
+        language: appDetails.language,
       });
       
       const newAssets = assets.map((a) => a.id === asset.id ? result : a);
@@ -249,18 +255,50 @@ export default function ResultPage() {
             isRegeneratingId={regeneratingId}
           />
 
-          {/* Add More */}
-          <div className="flex items-center gap-4 pt-6 border-t border-primary/10">
-            <AddAssetButton
-              onClick={handleAddMore}
-              isLoading={isAddingMore}
-              disabled={isAddingMore}
-            />
-            {isAddingMore && (
-              <span className="text-xs text-textSecondary animate-pulse-soft">
-                Orchestrating design and copy for new feature...
-              </span>
-            )}
+          {/* Add More Section */}
+          <div className="pt-8 border-t border-primary/10">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-bold text-textPrimary mr-2 uppercase tracking-wider text-[11px]">Add New Asset:</span>
+                
+                <button
+                  onClick={() => handleAddMore('portrait')}
+                  disabled={isAddingMore}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-primary/10 rounded-xl text-sm font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                  id="add-portrait-button"
+                >
+                  <div className="w-2.5 h-4 rounded-sm border-2 border-primary/40" />
+                  + Portrait
+                </button>
+
+                <button
+                  onClick={() => handleAddMore('landscape')}
+                  disabled={isAddingMore}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-primary/10 rounded-xl text-sm font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                  id="add-landscape-button"
+                >
+                  <div className="w-4 h-2.5 rounded-sm border-2 border-primary/40" />
+                  + Landscape
+                </button>
+
+                <button
+                  onClick={() => handleAddMore('square')}
+                  disabled={isAddingMore}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-primary/10 rounded-xl text-sm font-semibold text-textPrimary hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
+                  id="add-square-button"
+                >
+                  <div className="w-3.5 h-3.5 rounded-sm border-2 border-primary/40" />
+                  + Square
+                </button>
+              </div>
+
+              {isAddingMore && (
+                <div className="flex items-center gap-3 text-xs text-textSecondary animate-pulse-soft">
+                  <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                  <span>Orchestrating design and copy for new feature...</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

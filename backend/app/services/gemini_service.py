@@ -30,8 +30,20 @@ from app.prompts.prompts import (
     GENERATE_PLAY_STORE_DESCRIPTION_PROMPT,
 )
 from app.models.schemas import FeatureContent, AdItem, AppDescriptionResponse
+from app.services.image_service import _hex_to_rgb
 
 logger = logging.getLogger(__name__)
+
+
+def _get_text_color(bg_hex: str) -> str:
+    """Determine if white or dark text is better for a background color."""
+    try:
+        rgb = _hex_to_rgb(bg_hex)
+        # Standard relative luminance formula
+        luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255
+        return "#FFFFFF" if luminance < 0.55 else "#1A1A1A"
+    except:
+        return "#FFFFFF"
 
 # ─────────────────────────────────────────────
 # Client Initialization
@@ -53,6 +65,7 @@ async def generate_feature_copy(
     feature_concept: str,
     is_hero: bool = False,
     include_subtext: bool = False,
+    language: str = "English",
 ) -> FeatureContent:
     """
     Generate a punchy headline tailored specifically to the given user feature.
@@ -69,6 +82,7 @@ async def generate_feature_copy(
         target_audience=target_audience,
         brand_style=brand_style,
         feature_concept=feature_concept,
+        language=language,
     )
 
     try:
@@ -110,7 +124,8 @@ async def generate_feature_copy(
                 app_name=app_name,
                 app_category=app_category,
                 feature_concept=feature_concept,
-                headline=headline
+                headline=headline,
+                language=language
             )
 
         return FeatureContent(
@@ -132,6 +147,7 @@ async def generate_subtext(
     app_category: str,
     feature_concept: str,
     headline: str,
+    language: str = "English",
 ) -> str | None:
     """Generate a short supporting tagline for a given headline."""
     client = _get_client()
@@ -140,6 +156,7 @@ async def generate_subtext(
             f"You are a copywriter. Given this app headline: \"{headline}\" for the app \"{app_name}\" "
             f"(a {app_category} app, feature: {feature_concept}), "
             f"write ONE short supporting tagline (6-12 words) that reinforces the benefit. "
+            f"MUST BE WRITTEN IN THIS LANGUAGE: {language}. "
             f"Output ONLY the tagline text, nothing else. No quotes, no labels, no explanation."
         )
         sub_response = client.models.generate_content(
@@ -168,6 +185,43 @@ async def generate_subtext(
 # Timeout for image generation API calls (seconds)
 IMAGE_GENERATION_TIMEOUT = 300
 
+# Supported aspect ratios by Gemini image generation
+_SUPPORTED_RATIOS = {
+    (1, 1): "1:1",
+    (3, 4): "3:4",
+    (4, 3): "4:3",
+    (9, 16): "9:16",
+    (16, 9): "16:9",
+}
+
+
+def _calculate_aspect_ratio(width: int, height: int) -> str:
+    """
+    Calculate the closest Gemini-supported aspect ratio from pixel dimensions.
+    Supported values: 1:1, 3:4, 4:3, 9:16, 16:9.
+    """
+    from math import gcd
+    divisor = gcd(width, height)
+    simplified_w = width // divisor
+    simplified_h = height // divisor
+
+    # Check for exact match first
+    exact = _SUPPORTED_RATIOS.get((simplified_w, simplified_h))
+    if exact:
+        return exact
+
+    # Find closest supported ratio by comparing decimal values
+    target_ratio = width / height
+    best_match = "9:16"  # Default fallback for portrait
+    best_diff = float("inf")
+
+    for (rw, rh), label in _SUPPORTED_RATIOS.items():
+        diff = abs(target_ratio - (rw / rh))
+        if diff < best_diff:
+            best_diff = diff
+            best_match = label
+            
+    return best_match
 
 async def generate_asset_image(
     app_name: str,
@@ -192,6 +246,10 @@ async def generate_asset_image(
     """
     client = _get_client()
 
+    # Calculate aspect ratio from the requested dimensions
+    aspect_ratio = _calculate_aspect_ratio(width, height)
+    logger.info(f"Calculated aspect ratio: {aspect_ratio} from {width}x{height}")
+
     # Use the provided flag to choose between including and excluding emojis
     emoji_instruction = EMOJI_INCLUDE if include_emojis else EMOJI_EXCLUDE
     
@@ -200,6 +258,15 @@ async def generate_asset_image(
     
     subtext_val = subtext if subtext else ""
 
+    # Choose best text color for contrast
+    text_color = _get_text_color(color_theme)
+
+    # Enhance target OS description to provide stronger visual cues for the AI model
+    if target_os.lower() == "android":
+        os_description = "Use a modern flagship ANDROID phone with a centered small hole-punch camera and symmetric bezels. STRICTLY NO Apple notches or Dynamic Islands."
+    else:
+        os_description = "Use the latest IPHONE style with the Dynamic Island pill-shaped cutout and premium rounded screen corners. STRICTLY NO Android features."
+
     if orientation == "landscape":
         # Landscape: Redesigned layout with portrait phone
         prompt = IMAGE_GENERATION_LANDSCAPE_PROMPT.format(
@@ -207,12 +274,14 @@ async def generate_asset_image(
             app_category=app_category,
             feature=feature,
             headline=headline,
-            subtext=subtext_val,
             color_theme=color_theme,
             width=width,
             height=height,
             include_emoji=emoji_instruction,
             target_os=target_os,
+            os_details=os_description,
+            text_color=text_color,
+            subtext=subtext_val,
             background_instruction=bg_instruction,
         )
         contents = prompt
@@ -231,6 +300,8 @@ async def generate_asset_image(
             width=width,
             height=height,
             target_os=target_os,
+            os_details=os_description,
+            text_color=text_color,
             subtext=subtext_val,
             background_instruction=bg_instruction,
         )
@@ -265,6 +336,8 @@ async def generate_asset_image(
             include_emoji=emoji_instruction,
             mockup_style=mockup_style_str,
             target_os=target_os,
+            os_details=os_description,
+            text_color=text_color,
             subtext=subtext_val,
             background_instruction=bg_instruction,
         )
@@ -275,12 +348,12 @@ async def generate_asset_image(
     logger.info(f"Image prompt (first 300 chars): {prompt_text[:300]}...")
 
     try:
+        # Use async client with timeout to avoid hanging forever
         logger.info(
             f"Generating asset image for '{feature}' with headline '{headline}' "
-            f"using model 'gemini-3.1-flash-image-preview' (timeout: {IMAGE_GENERATION_TIMEOUT}s)"
+            f"using model 'gemini-3.1-flash-image-preview' (timeout: {IMAGE_GENERATION_TIMEOUT}s) "
         )
         
-        # Use async client with timeout to avoid hanging forever
         response = await asyncio.wait_for(
             client.aio.models.generate_content(
                 model="gemini-3.1-flash-image-preview",
@@ -288,6 +361,10 @@ async def generate_asset_image(
                 config=types.GenerateContentConfig(
                     response_modalities=["IMAGE", "TEXT"],
                     temperature=1.0,
+                    image_config=types.ImageConfig(
+                        aspect_ratio=aspect_ratio,
+                        image_size="2K",
+                    )
                 ),
             ),
             timeout=IMAGE_GENERATION_TIMEOUT,
@@ -409,6 +486,9 @@ async def generate_ad_image(
     style_template = AD_CREATIVE_STYLES[ad_index % len(AD_CREATIVE_STYLES)]
     ad_style = style_template.format(target_os=target_os, color_theme=color_theme)
 
+    # Calculate text color for ads too
+    text_color = _get_text_color(color_theme)
+
     prompt = AD_IMAGE_PROMPT.format(
         app_name=app_name,
         app_category=app_category,
@@ -417,6 +497,7 @@ async def generate_ad_image(
         headline=headline,
         color_theme=color_theme,
         target_os=target_os,
+        text_color=text_color,
         asset_context=asset_context,
         uploaded_screenshots=uploaded_screenshots,
         ad_style=ad_style,
@@ -477,6 +558,7 @@ async def extract_features_list(
     target_audience: str,
     brand_style: str,
     app_description: str,
+    language: str = "English",
 ) -> list[str]:
     """
     Analyze the app description and generate an array of 5 feature highlights.
@@ -489,6 +571,7 @@ async def extract_features_list(
         target_audience=target_audience,
         brand_style=brand_style,
         app_description=app_description,
+        language=language,
     )
 
     try:
@@ -529,6 +612,7 @@ async def generate_app_description(
     features: list[str],
     app_description: str = "",
     include_emojis: bool = True,
+    language: str = "English",
 ) -> AppDescriptionResponse:
     """Generate a Play Store app description using Gemini."""
     client = _get_client()
@@ -544,6 +628,7 @@ async def generate_app_description(
         features_list=features_list,
         app_description=app_description,
         emoji_instruction=emoji_instruction,
+        language=language,
     )
 
     try:

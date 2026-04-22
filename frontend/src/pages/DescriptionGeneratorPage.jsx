@@ -2,26 +2,9 @@ import { useState } from 'react';
 import { Sparkles, AlertCircle, X, Copy, Check, Info, FileText, Send } from 'lucide-react';
 import { generatePlayStoreDescription } from '../services/api';
 import FeatureInputList from '../components/FeatureInputList';
+import { CATEGORIES, TARGET_AUDIENCES, LANGUAGES, BRAND_STYLES } from '../utils/constants';
 
-const CATEGORIES = [
-  'Business', 'Communication', 'Education', 'Entertainment', 'Finance',
-  'Food & Drink', 'Games', 'Health & Fitness', 'Lifestyle', 'Medical',
-  'Music & Audio', 'News', 'Photography', 'Productivity', 'Shopping',
-  'Social', 'Sports', 'Tools', 'Travel', 'Weather',
-];
 
-const TARGET_AUDIENCES = [
-  'Young Professionals', 'Students', 'Fitness Enthusiasts', 'Gamers',
-  'Travelers', 'Parents', 'Small Business Owners', 'Designers & Creatives',
-  'Tech Enthusiasts', 'Health-conscious Individuals', 'General Public'
-].sort();
-
-const BRAND_STYLES = [
-  'Modern & Minimal', 'Bold & Vibrant', 'Playful & Friendly',
-  'Corporate & Professional', 'Premium & Elegant', 'Dark & Futuristic',
-  'Clean & Functional', 'Retro & Vintage', 'Artistic & Creative',
-  'Geometric & Structured'
-].sort();
 
 export default function DescriptionGeneratorPage() {
   const [formData, setFormData] = useState({
@@ -32,6 +15,7 @@ export default function DescriptionGeneratorPage() {
     features: [],
     appDescription: '',
     includeEmojis: true,
+    language: 'English',
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -137,38 +121,50 @@ export default function DescriptionGeneratorPage() {
                     {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                   </select>
                 </div>
-                
+
                 <div>
-                    <label className="block text-sm font-bold text-textPrimary mb-2">Target Audience</label>
-                    <select
-                        className="input-field appearance-none mb-2"
-                        value={isOtherAudience ? 'Other' : formData.targetAudience}
-                        onChange={(e) => {
-                            if (e.target.value === 'Other') {
-                                setIsOtherAudience(true);
-                                handleChange('targetAudience', '');
-                            } else {
-                                setIsOtherAudience(false);
-                                handleChange('targetAudience', e.target.value);
-                            }
-                        }}
-                        disabled={isGenerating}
-                    >
-                        <option value="">Select Audience...</option>
-                        {TARGET_AUDIENCES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                        <option value="Other">Other...</option>
-                    </select>
-                    {isOtherAudience && (
-                        <input
-                            type="text"
-                            className="input-field animate-fade-in"
-                            placeholder="Specify audience..."
-                            value={formData.targetAudience}
-                            onChange={(e) => handleChange('targetAudience', e.target.value)}
-                            disabled={isGenerating}
-                        />
-                    )}
+                  <label className="block text-sm font-bold text-textPrimary mb-2">Language</label>
+                  <select
+                    className="input-field appearance-none"
+                    value={formData.language}
+                    onChange={(e) => handleChange('language', e.target.value)}
+                    disabled={isGenerating}
+                  >
+                    {LANGUAGES.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+                  </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-textPrimary mb-2">Target Audience</label>
+                <select
+                  className="input-field appearance-none mb-2"
+                  value={isOtherAudience ? 'Other' : formData.targetAudience}
+                  onChange={(e) => {
+                    if (e.target.value === 'Other') {
+                      setIsOtherAudience(true);
+                      handleChange('targetAudience', '');
+                    } else {
+                      setIsOtherAudience(false);
+                      handleChange('targetAudience', e.target.value);
+                    }
+                  }}
+                  disabled={isGenerating}
+                >
+                  <option value="">Select Audience...</option>
+                  {TARGET_AUDIENCES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  <option value="Other">Other...</option>
+                </select>
+                {isOtherAudience && (
+                  <input
+                    type="text"
+                    className="input-field animate-fade-in"
+                    placeholder="Specify audience..."
+                    value={formData.targetAudience}
+                    onChange={(e) => handleChange('targetAudience', e.target.value)}
+                    disabled={isGenerating}
+                  />
+                )}
               </div>
 
               <div>

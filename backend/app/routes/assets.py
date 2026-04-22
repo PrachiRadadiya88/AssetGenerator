@@ -86,7 +86,7 @@ async def generate_assets(
     brand_style: str = Form(""),
     app_category: str = Form(...),
     color_theme: str = Form("#8B5E3C"),
-    target_os: str = "iOS",
+    target_os: str = Form("iOS"),
     num_portrait: int = Form(4),
     num_landscape: int = Form(0),
     num_square: int = Form(0),
@@ -99,6 +99,7 @@ async def generate_assets(
     use_raw_features: bool = Form(False),
     include_emojis: bool = Form(True),
     consistent_background: bool = Form(True),
+    language: str = Form("English"),
     screenshots: Optional[list[UploadFile]] = File(None),
 ):
     """
@@ -195,6 +196,7 @@ async def generate_assets(
                     feature_concept=feat_concept,
                     is_hero=(i == 0),
                     include_subtext=include_subtext,
+                    language=language,
                 ) for i, feat_concept in enumerate(initial_features_concepts)
             ]
             generated_features = await asyncio.gather(*tasks)
@@ -635,6 +637,7 @@ async def generate_features_list(request: GenerateFeaturesRequest):
             target_audience=request.target_audience,
             brand_style=request.brand_style,
             app_description=request.app_description,
+            language=request.language,
         )
         return GenerateFeaturesResponse(features=features)
     except Exception as e:
@@ -668,7 +671,8 @@ async def regenerate_asset(request: RegenerateAssetRequest):
                     app_name=request.app_name,
                     app_category=request.app_category,
                     feature_concept=request.feature_concept,
-                    headline=request.feature_concept
+                    headline=request.feature_concept,
+                    language=request.language
                 )
             feature_data = FeatureContent(feature=request.feature_concept, headline=request.feature_concept, subtext=subtext)
         else:
@@ -680,6 +684,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
                 feature_concept=request.feature_concept,
                 is_hero=request.is_hero,
                 include_subtext=request.include_subtext,
+                language=request.language
             )
     except Exception as e:
         logger.error(f"Feature copy regeneration failed: {e}")
@@ -756,6 +761,7 @@ async def generate_play_store_description(request: GenerateDescriptionRequest):
             features=request.features,
             app_description=request.app_description,
             include_emojis=request.include_emojis,
+            language=request.language,
         )
         return description
     except Exception as e:

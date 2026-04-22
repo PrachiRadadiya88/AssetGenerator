@@ -9,26 +9,9 @@ import { Wand2, Info, Sparkles, Loader2, Smartphone } from 'lucide-react';
 import FeatureInputList from './FeatureInputList';
 import ScreenshotUploader from './ScreenshotUploader';
 import { generateFeaturesList } from '../services/api';
+import { CATEGORIES, TARGET_AUDIENCES, LANGUAGES, BRAND_STYLES } from '../utils/constants';
 
-const CATEGORIES = [
-  'Business', 'Communication', 'Education', 'Entertainment', 'Finance',
-  'Food & Drink', 'Games', 'Health & Fitness', 'Lifestyle', 'Medical',
-  'Music & Audio', 'News', 'Photography', 'Productivity', 'Shopping',
-  'Social', 'Sports', 'Tools', 'Travel', 'Weather',
-];
 
-const TARGET_AUDIENCES = [
-  'Young Professionals', 'Students', 'Fitness Enthusiasts', 'Gamers',
-  'Travelers', 'Parents', 'Small Business Owners', 'Designers & Creatives',
-  'Tech Enthusiasts', 'Health-conscious Individuals', 'General Public'
-].sort();
-
-const BRAND_STYLES = [
-  'Modern & Minimal', 'Bold & Vibrant', 'Playful & Friendly',
-  'Corporate & Professional', 'Premium & Elegant', 'Dark & Futuristic',
-  'Clean & Functional', 'Retro & Vintage', 'Artistic & Creative',
-  'Geometric & Structured'
-].sort();
 
 const PORTRAIT_SIZES = [
   { label: '1080 × 1920 (Standard Vertical)', value: '1080x1920' },
@@ -169,6 +152,7 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
       landscapeSize: '1920x1080',
       squareSize: '1080x1080',
       consistentBackground: true,
+      language: 'English',
     };
 
     if (initialData) {
@@ -257,11 +241,12 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
         targetAudience: formData.targetAudience,
         brandStyle: formData.brandStyle,
         appDescription: formData.appDescription,
+        language: formData.language,
       });
-      if (result.features && result.features.length > 0) {
+      if (result && result.length > 0) {
         setFormData(prev => ({
           ...prev,
-          features: result.features.map(f => typeof f === 'string' ? f : f.toString())
+          features: result.map(f => typeof f === 'string' ? f : f.toString())
         }));
       }
     } catch (err) {
@@ -298,27 +283,46 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
             onChange={(e) => handleChange('appName', e.target.value)}
             disabled={isLoading}
           />
-          <FieldHint>Your app's name as it appears on the Play Store.</FieldHint>
+          <FieldHint>The name that will appear on your screenshots.</FieldHint>
           {errors.appName && <p className="mt-1 text-xs text-red-500">{errors.appName}</p>}
         </div>
 
-        {/* Category */}
-        <div>
-          <label htmlFor="app-category" className="block text-sm font-semibold text-textPrimary mb-1">
-            Category
-          </label>
-          <select
-            id="app-category"
-            className="input-field appearance-none cursor-pointer"
-            value={formData.appCategory}
-            onChange={(e) => handleChange('appCategory', e.target.value)}
-            disabled={isLoading}
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-          <FieldHint>Select the Play Store category that best fits your app.</FieldHint>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* App Category */}
+          <div>
+            <label htmlFor="app-category" className="block text-sm font-semibold text-textPrimary mb-1">
+              App Category <span className="text-accentTerracotta">*</span>
+            </label>
+            <select
+              id="app-category"
+              className="input-field appearance-none cursor-pointer"
+              value={formData.appCategory}
+              onChange={(e) => handleChange('appCategory', e.target.value)}
+              disabled={isLoading}
+            >
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Language Selection */}
+          <div>
+            <label htmlFor="language" className="block text-sm font-semibold text-textPrimary mb-1">
+              Output Language <span className="text-accentTerracotta">*</span>
+            </label>
+            <select
+              id="language"
+              className="input-field appearance-none cursor-pointer"
+              value={formData.language}
+              onChange={(e) => handleChange('language', e.target.value)}
+              disabled={isLoading}
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* --- App Description & Feature Generator --- */}
@@ -327,15 +331,6 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
             <label htmlFor="app-description" className="text-sm font-semibold text-textPrimary flex items-center gap-2">
               App Description
             </label>
-            <button
-              type="button"
-              onClick={handleGenerateFeatures}
-              disabled={isGeneratingFeatures || isLoading}
-              className="px-3 py-1.5 bg-accentTerracotta/10 hover:bg-accentTerracotta/20 text-accentTerracotta rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50"
-            >
-              {isGeneratingFeatures ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-              Extract AI Features
-            </button>
           </div>
           <textarea
             id="app-description"
@@ -351,11 +346,22 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
 
         {/* --- Features --- */}
         <div className="mt-8 pt-6 border-t border-primary/5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-3 h-3" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-3 h-3" />
+              </div>
+              <h3 className="text-sm font-semibold text-textPrimary">App Features</h3>
             </div>
-            <h3 className="text-sm font-semibold text-textPrimary">App Features</h3>
+            <button
+              type="button"
+              onClick={handleGenerateFeatures}
+              disabled={isGeneratingFeatures || isLoading}
+              className="px-3 py-1.5 bg-accentTerracotta/10 hover:bg-accentTerracotta/20 text-accentTerracotta rounded-lg text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {isGeneratingFeatures ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+              Extract Features from Description
+            </button>
           </div>
 
           <div className="mb-4 px-3 py-2.5 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-2.5">
@@ -669,6 +675,7 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
             </div>
           </label>
         </div>
+
 
         {/* --- Include Banner Toggle --- */}
         <div className="mb-6">

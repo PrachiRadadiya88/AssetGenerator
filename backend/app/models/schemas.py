@@ -41,6 +41,7 @@ class AddAssetRequest(BaseModel):
     include_emojis: bool = True
     size: str = "1080x1920"
     consistent_background: bool = True
+    language: str = "English"
 
 
 class AddAssetResponse(BaseModel):
@@ -109,6 +110,7 @@ class GenerateFeaturesRequest(BaseModel):
     target_audience: str
     brand_style: str
     app_description: str
+    language: str = "English"
 
 class GenerateFeaturesResponse(BaseModel):
     features: list[str]
@@ -146,6 +148,7 @@ class RegenerateAssetRequest(BaseModel):
     existing_headline: Optional[str] = None
     existing_subtext: Optional[str] = None
     consistent_background: bool = True
+    language: str = "English"
 
 class ScrapePlayStoreRequest(BaseModel):
     url: str
