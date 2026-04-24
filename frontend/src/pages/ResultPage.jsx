@@ -69,6 +69,7 @@ export default function ResultPage() {
         size: targetSize,
         consistentBackground: appDetails.consistentBackground,
         language: appDetails.language,
+        userVision: appDetails.userVision,
       });
       const newAssets = [...assets, result.asset];
       setAssets(newAssets);
@@ -190,6 +191,7 @@ export default function ResultPage() {
         existing_subtext: asset.subtext,
         consistentBackground: appDetails.consistentBackground,
         language: appDetails.language,
+        userVision: appDetails.userVision,
       });
       
       const newAssets = assets.map((a) => a.id === asset.id ? result : a);

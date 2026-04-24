@@ -66,6 +66,7 @@ async def generate_feature_copy(
     is_hero: bool = False,
     include_subtext: bool = False,
     language: str = "English",
+    user_vision: str = "",
 ) -> FeatureContent:
     """
     Generate a punchy headline tailored specifically to the given user feature.
@@ -83,6 +84,7 @@ async def generate_feature_copy(
         brand_style=brand_style,
         feature_concept=feature_concept,
         language=language,
+        user_vision=user_vision,
     )
 
     try:
@@ -240,6 +242,7 @@ async def generate_asset_image(
     include_emojis: bool = True,
     consistent_background: bool = True,
     language: str = "English",
+    user_vision: str = "",
 ) -> str:
     """
     Generate an image using Gemini's experimental imagen-3.0-generate-002 model.
@@ -285,6 +288,7 @@ async def generate_asset_image(
             subtext=subtext_val,
             background_instruction=bg_instruction,
             language=language,
+            user_vision=user_vision,
         )
         contents = prompt
     elif uploaded_image_path and os.path.exists(uploaded_image_path):
@@ -307,6 +311,7 @@ async def generate_asset_image(
             subtext=subtext_val,
             background_instruction=bg_instruction,
             language=language,
+            user_vision=user_vision,
         )
         
         # Read the uploaded image
@@ -344,6 +349,7 @@ async def generate_asset_image(
             subtext=subtext_val,
             background_instruction=bg_instruction,
             language=language,
+            user_vision=user_vision,
         )
         contents = prompt
 

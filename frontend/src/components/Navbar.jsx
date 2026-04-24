@@ -47,6 +47,16 @@ export default function Navbar() {
             >
               Rebrand Assets
             </Link>
+            {/* <Link 
+              to="/video-generator" 
+              className={`text-sm font-semibold transition-colors ${
+                location.pathname === '/video-generator' 
+                  ? 'text-primary' 
+                  : 'text-textSecondary hover:text-textPrimary'
+              }`}
+            >
+              Video Studio
+            </Link> */}
             {!isGenerator ? (
               <Link to="/generator" className="btn-primary text-sm flex items-center gap-2">
                 <LayoutGrid className="w-4 h-4" />

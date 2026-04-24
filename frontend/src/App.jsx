@@ -9,6 +9,7 @@ import InputPage from './pages/InputPage';
 import ResultPage from './pages/ResultPage';
 import DescriptionGeneratorPage from './pages/DescriptionGeneratorPage';
 import RebrandPage from './pages/RebrandPage';
+import VideoGeneratorPage from './pages/VideoGeneratorPage';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/results" element={<ResultPage />} />
           <Route path="/description-generator" element={<DescriptionGeneratorPage />} />
           <Route path="/rebrand" element={<RebrandPage />} />
+          {/* <Route path="/video-generator" element={<VideoGeneratorPage />} /> */}
         </Routes>
       </div>
     </Router>

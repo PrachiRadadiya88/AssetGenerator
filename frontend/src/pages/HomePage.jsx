@@ -29,6 +29,7 @@ import {
   Shield,
   Megaphone,
   RotateCcw,
+  Video,
 } from 'lucide-react';
 
 const features = [
@@ -77,6 +78,11 @@ const features = [
     title: 'Instant App Rebranding',
     description: 'Scrape any Play Store URL to automatically extract metadata and screenshots for a seamless redesign.',
   },
+  /* {
+    icon: <Video className="w-5 h-5" />,
+    title: 'AI Video Studio',
+    description: 'Generate Play Store promotional videos using a multi-agent AI pipeline with cinematic storyboards.',
+  }, */
 ];
 
 const steps = [
@@ -148,6 +154,11 @@ export default function HomePage() {
                 <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span>Write Copy</span>
               </Link>
+
+              {/* <Link to="/video-generator" className="group btn-secondary text-lg px-8 py-5 border-2 border-primary/10 hover:border-primary/30 bg-white/60 backdrop-blur-md w-full sm:w-auto">
+                <Video className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>Video Studio</span>
+              </Link> */}
             </div>
 
           </div>
@@ -213,6 +224,23 @@ export default function HomePage() {
                     </div>
                 </div>
             </Link>
+
+            {/* Tool Card 4: Video Studio (HIDDEN) */}
+            {/* <Link to="/video-generator" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
+                <div className="aspect-video overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=1000" alt="Video Production" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-violet-700/80 to-transparent flex flex-col justify-end p-8 text-white">
+                        <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-4">
+                            <Video className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">Video Studio</h3>
+                        <p className="text-white/80 max-w-sm mb-4">Generate cinematic Play Store videos with our multi-agent AI pipeline.</p>
+                        <div className="flex items-center gap-2 font-bold text-sm">
+                            Create Video <ArrowRight className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </Link> */}
           </div>
         </div>
       </section>

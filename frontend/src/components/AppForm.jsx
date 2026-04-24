@@ -153,6 +153,7 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
       squareSize: '1080x1080',
       consistentBackground: true,
       language: 'English',
+      userVision: '',
     };
 
     if (initialData) {
@@ -342,6 +343,25 @@ export default function AppForm({ onSubmit, isLoading, screenshots, setScreensho
             placeholder="Tell us what your app does, its core value proposition, and why users love it..."
           />
           <FieldHint>The AI will analyze your description to automatically fill the Features list below.</FieldHint>
+        </div>
+
+        {/* --- User Vision (Optional) --- */}
+        <div className="mt-6 pt-4 border-t border-primary/5">
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="user-vision" className="text-sm font-semibold text-textPrimary flex items-center gap-2">
+              User Vision (Optional)
+            </label>
+          </div>
+          <textarea
+            id="user-vision"
+            rows="3"
+            value={formData.userVision}
+            onChange={(e) => handleChange('userVision', e.target.value)}
+            disabled={isLoading}
+            className={`input-field resize-y min-h-[90px]`}
+            placeholder="Describe your creative vision, specific styles, or concepts you want the AI to incorporate into the assets..."
+          />
+          <FieldHint>Additional context, constraints, or creative direction to guide the asset generation.</FieldHint>
         </div>
 
         {/* --- Features --- */}

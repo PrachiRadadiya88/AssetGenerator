@@ -6,9 +6,9 @@
 
 import axios from 'axios';
 
-// const API_BASE = 'http://localhost:8001';
+const API_BASE = 'http://localhost:8001';
 // const API_BASE = 'https://plural-muster-treading.ngrok-free.dev';
-const API_BASE = 'https://asset-gen.rejoicehub.com';
+// const API_BASE = 'https://asset-gen.rejoicehub.com';
 const API_URL = `${API_BASE}/api`;
 
 const api = axios.create({
@@ -53,6 +53,7 @@ export const generateAssets = async ({
   includeEmojis,
   consistentBackground = true,
   language = 'English',
+  userVision = '',
   screenshots,
   targetOs = 'iOS',
 }) => {
@@ -76,6 +77,7 @@ export const generateAssets = async ({
   formData.append('include_emojis', includeEmojis);
   formData.append('consistent_background', consistentBackground);
   formData.append('language', language);
+  formData.append('user_vision', userVision);
 
   // Append screenshots if provided
   if (screenshots && screenshots.length > 0) {
@@ -121,6 +123,7 @@ export async function addAsset({
   size = '1080x1920',
   consistentBackground = true,
   language = 'English',
+  userVision = '',
 }) {
   const payload = {
     session_id: sessionId,
@@ -139,6 +142,7 @@ export async function addAsset({
     size: size,
     consistent_background: consistentBackground,
     language: language,
+    user_vision: userVision,
   };
 
   const response = await api.post('/add-asset', payload);
@@ -368,6 +372,7 @@ export async function regenerateAsset({
   existing_subtext = null,
   consistentBackground = true,
   language = 'English',
+  userVision = '',
 }) {
   const response = await api.post('/regenerate-asset', {
     session_id: sessionId,
@@ -390,6 +395,7 @@ export async function regenerateAsset({
     existing_subtext: existing_subtext,
     consistent_background: consistentBackground,
     language: language,
+    user_vision: userVision,
   });
   return response.data;
 }
@@ -438,4 +444,97 @@ export async function generatePlayStoreDescription({
 export async function scrapePlayStore(url) {
   const response = await api.post('/scrape-playstore', { url });
   return response.data;
+}
+
+/**
+ * Fetch available video types for the Video Generator.
+ * 
+ * @returns {Promise<{video_types: Array}>}
+ */
+export async function getVideoTypes() {
+  const response = await api.get('/video-types');
+  return response.data;
+}
+
+/**
+ * Generate a Play Store promotional video using the agentic pipeline.
+ * 
+ * @param {Object} params
+ * @param {string} params.appName
+ * @param {string} params.appCategory
+ * @param {string} params.targetAudience
+ * @param {string} params.brandStyle
+ * @param {string} params.colorTheme
+ * @param {string} params.targetOs
+ * @param {string[]} params.features
+ * @param {string} params.language
+ * @param {string} params.videoType
+ * @param {string} params.userDescription
+ * @param {File[]} params.screenshots
+ * @returns {Promise<Object>} Full pipeline output
+ */
+export async function generateVideo({
+  appName,
+  appCategory,
+  targetAudience = '',
+  brandStyle = '',
+  colorTheme = '#8B5E3C',
+  targetOs = 'Android',
+  features = [],
+  language = 'English',
+  videoType = 'cinematic',
+  userDescription = '',
+  appDescription = '',
+  screenshots = [],
+  logo = null,
+}) {
+  const formData = new FormData();
+  formData.append('app_name', appName);
+  formData.append('app_category', appCategory);
+  formData.append('target_audience', targetAudience);
+  formData.append('brand_style', brandStyle);
+  formData.append('color_theme', colorTheme);
+  formData.append('target_os', targetOs);
+  formData.append('features', JSON.stringify(features));
+  formData.append('language', language);
+  formData.append('video_type', videoType);
+  formData.append('user_description', userDescription);
+  formData.append('app_description', appDescription);
+
+  if (screenshots && screenshots.length > 0) {
+    screenshots.forEach((file) => {
+      formData.append('screenshots', file);
+    });
+  }
+
+  if (logo) {
+    formData.append('logo', logo);
+  }
+
+  const response = await api.post('/generate-video', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+
+  return response.data;
+}
+
+export async function generateVideoVision({
+  appName = '',
+  appCategory = '',
+  appDescription = '',
+  features = [],
+  targetAudience = '',
+  videoType = 'cinematic',
+  language = 'English',
+}) {
+  const response = await api.post('/generate-video-vision', {
+    app_name: appName,
+    app_category: appCategory,
+    app_description: appDescription,
+    features: features,
+    target_audience: targetAudience,
+    video_type: videoType,
+    language: language,
+  });
+  return response.data.video_vision;
 }

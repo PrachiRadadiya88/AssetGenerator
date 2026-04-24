@@ -60,6 +60,7 @@ App Category: {app_category}
 Target Audience: {target_audience}
 Brand Style: {brand_style}
 Language: {language}
+User Vision/Creative Direction: {user_vision}
 
 Feature to Highlight (use this exactly): {feature_concept}
 
@@ -97,6 +98,7 @@ App Category: {app_category}
 Target Audience: {target_audience}
 Brand Style: {brand_style}
 Language: {language}
+User Vision/Creative Direction: {user_vision}
 Initial Request/Context: {feature_concept}
 
 HEADLINE RULES:
@@ -150,6 +152,7 @@ IMAGE_GENERATION_BLANK_PROMPT_V3 = """Create a premium Google Play Store screens
 
 THE APP: "{app_name}" — a {app_category} app.
 THE FEATURE TO SHOWCASE: "{feature}"
+USER CREATIVE VISION: "{user_vision}"
 
 CANVAS: {width}x{height} pixels (portrait orientation).
 
@@ -161,6 +164,12 @@ MANDATORY HARD-CONSTRAINTS (CRITICAL):
 - NO-OVERLAP RULE: The typography MUST be confined to the top 25% of the canvas. It MUST NOT touch, hide behind, or overlap the phone mockup.
 - DYNAMIC TEXT SCALING: Reduce font size for headlines "{headline}" longer than 5 words to keep them in the top section.
 - PROHIBITED ELEMENTS: No Apple logos, no pill-shaped cutouts (if Android), no watermarks.
+
+VISUAL FIDELITY & PREMIUM DESIGN (MANDATORY):
+- The final asset MUST be visually stunning, high-fidelity, and "wow" the user at first glance.
+- AVOID SIMPLE OR FLAT DESIGNS. Use rich textures, dynamic lighting, subtle gradients, and depth.
+- The composition should feel alive and premium, similar to top-tier app marketing (e.g., Duolingo, Revolut, or Airbnb).
+- STRICT VISION ADHERENCE: If a "USER CREATIVE VISION" is provided, you MUST use it as your primary stylistic and conceptual anchor. Every detail should reflect that vision.
 
 LAYOUT INSTRUCTIONS (Top to Bottom):
 1. Upper Section (top 25-30% of the canvas):
@@ -295,6 +304,7 @@ IMAGE_GENERATION_LANDSCAPE_PROMPT = """Create a stunning, premium Google Play St
 
 THE APP: "{app_name}" — a {app_category} app.
 THE FEATURE TO SHOWCASE: "{feature}"
+USER CREATIVE VISION: "{user_vision}"
 
 CANVAS: {width}x{height} pixels (landscape orientation).
 
@@ -302,9 +312,14 @@ MANDATORY HARD-CONSTRAINTS (Banner Layout):
 - STRICT LANGUAGE REQUIREMENT: All text in the banner (headline, subtext, and phone UI) MUST be written in: {language}.
 - ZERO ENGLISH TOLERANCE: No English words allowed anywhere. Translate all UI labels and app names into {language}.
 - STRICT DEVICE IDENTITY: You MUST follow these hardware specifications: {os_details}
-- 60/40 SPLIT RULE: The left 60% is for TEXT ONLY. The right 40% is for the DEVICE ONLY. 
-- NO-OVERLAP: The text in the left block MUST NOT cross into the right block or touch the phone mockup.
-- PROHIBITED: If {target_os} is Android, NO Apple branding, no "Notch", no pill cutouts. If {target_os} is iOS, NO Android branding.
+- 60/40 SPLIT RULE (FLEXIBLE): Aim for the text on the left and device on the right, but ensure a dynamic, modern layout that doesn't look like a basic split-screen.
+- NO-OVERLAP (STRICT): The headline text MUST NOT overlap with the phone frame to ensure readability.
+- PROHIBITED: If {target_os} is Android, NO Apple branding. If {target_os} is iOS, NO Android branding.
+
+VISUAL FIDELITY & PREMIUM DESIGN (MANDATORY):
+- This is a billboard-style HERO graphic. It MUST look incredibly premium, attractive, and "wow" the user.
+- NO SIMPLE OR FLAT DESIGNS. Use 3D elements, immersive background textures, and complex visual depth.
+- STRICT VISION ADHERENCE: You MUST prioritize and explicitly implement the "USER CREATIVE VISION" in the atmosphere, styling, and color logic of this banner. It is your primary creative brief.
 
 LAYOUT COMPOSITION:
 1. Left Block (60% of canvas) — Marketing text area:
@@ -359,6 +374,7 @@ IMAGE_ENHANCE_PROMPT_V3 = """Create a premium Google Play Store screenshot marke
 
 THE APP: "{app_name}" — a {app_category} app.
 THE FEATURE TO SHOWCASE: "{feature}"
+USER CREATIVE VISION: "{user_vision}"
 
 CANVAS: {width}x{height} pixels.
 
@@ -398,8 +414,13 @@ PHONE SCREEN UI:
 - Create dynamic visual depth by popping key feature elements out of the screen (3D floating UI cards, overlapping layers, elements bursting out of the phone bezel)
 - Include status bar (time, battery, signal icons) in the exact style of {target_os}.
 - All content must be realistic — NO placeholder text
-- Use {color_theme} as accent color
-- The screen must look like a real, polished, shipping app
+- Use {color_theme} as the primary accent color for buttons and UI highlights.
+- The screen must look like a real, polished, shipping app.
+
+VISUAL FIDELITY & PREMIUM DESIGN (MANDATORY):
+- This asset MUST feel like a high-end editorial marketing piece (e.g., Apple Store style).
+- NO SIMPLE OR GENERIC DESIGNS. Use sophisticated lighting, layered 3D UI cards, and rich background details.
+- STRICT VISION ADHERENCE: The "USER CREATIVE VISION" is your core stylistic instruction. If provided, the final output MUST be a direct and high-fidelity reflection of that vision's tone, style, and concept.
 
 OVERALL STYLE:
 - {background_instruction}
@@ -650,3 +671,35 @@ Output Format Example:
   "full_description": "Are you struggling with productivity?...\\n\\nKey Features:\\n- ✅ Smart Tracking: ...\\n- ☁️ Cloud Sync: ..."
 }
 """
+
+# ─────────────────────────────────────────────
+# VIDEO VISION GENERATOR PROMPT
+# ─────────────────────────────────────────────
+
+GENERATE_VIDEO_VISION_PROMPT = """You are an expert Play Store video marketing strategist.
+Based on the app details below, write a detailed VIDEO VISION — a visual scenario
+description for a promotional video that would appear on the Play Store.
+
+APP NAME: {app_name}
+CATEGORY: {app_category}
+DESCRIPTION: {app_description}
+TARGET AUDIENCE: {target_audience}
+FEATURES:
+{features_text}
+VIDEO STYLE: {video_type}
+
+Write a 3-5 sentence VIDEO VISION that describes:
+1. WHO is using the app (a person in a real-world setting)
+2. WHAT specific features they demonstrate on their phone screen
+3. WHERE the scenes take place (real locations that match the app's purpose)
+4. The EMOTIONAL journey — how the person feels before and after using the app
+
+RULES:
+- ONLY reference the features listed above — never invent features
+- Describe real people in real settings using the app on a phone
+- Make it feel like a professional Play Store promotional video
+- Write in {language}
+- Keep it concise: 3-5 sentences maximum
+- Focus on visual scenarios, not marketing copy
+
+Return ONLY the video vision text. No quotes, no labels, no explanation."""

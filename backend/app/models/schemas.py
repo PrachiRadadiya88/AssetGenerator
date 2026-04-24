@@ -42,6 +42,7 @@ class AddAssetRequest(BaseModel):
     size: str = "1080x1920"
     consistent_background: bool = True
     language: str = "English"
+    user_vision: str = ""
 
 
 class AddAssetResponse(BaseModel):
@@ -152,6 +153,7 @@ class RegenerateAssetRequest(BaseModel):
     existing_subtext: Optional[str] = None
     consistent_background: bool = True
     language: str = "English"
+    user_vision: str = ""
 
 class ScrapePlayStoreRequest(BaseModel):
     url: str
@@ -165,3 +167,94 @@ class ScrapedAppData(BaseModel):
     suggested_audience: str
     suggested_style: str
     suggested_color: str
+
+
+# ═════════════════════════════════════════════════════════════════
+# VIDEO GENERATION SCHEMAS
+# ═════════════════════════════════════════════════════════════════
+
+class VideoTextOverlaySpec(BaseModel):
+    """Text overlay specification for a video scene."""
+    text: str = ""
+    position: str = "bottom-center"
+    font_style: str = "bold"
+    font_size: str = "large"
+    color: str = "#FFFFFF"
+
+
+class VideoScene(BaseModel):
+    """A single scene in the video storyboard."""
+    scene_number: int
+    duration_seconds: int = 4
+    scene_title: str = ""
+    visual_description: str = ""
+    text_overlay: str = ""
+    screen_content: str = ""
+    transition_in: str = "fade_in"
+    transition_out: str = "morph"
+    use_screenshot_index: Optional[int] = None
+
+
+class VideoSceneVisual(BaseModel):
+    """Visual Designer output for a single scene."""
+    scene_number: int
+    video_generation_prompt: str
+    text_overlay_spec: Optional[VideoTextOverlaySpec] = None
+    motion_direction: str = ""
+    scene_image_url: Optional[str] = None
+    scene_video_url: Optional[str] = None
+
+
+class GenerateVideoRequest(BaseModel):
+    """Request body for POST /generate-video."""
+    session_id: Optional[str] = None
+    app_name: str
+    app_category: str
+    target_audience: str = ""
+    brand_style: str = ""
+    color_theme: str = "#8B5E3C"
+    target_os: str = "Android"
+    features: list[str] = Field(default_factory=list)
+    language: str = "English"
+    video_type: str = "cinematic"  # cinematic | walkthrough | tutorial | feature_highlight | before_after
+    user_description: str = ""  # User's custom description of what they want
+    screenshot_ids: list[str] = Field(default_factory=list)  # References to uploaded/generated screenshots
+
+
+class VideoAgentStep(BaseModel):
+    """Status of an individual agent in the pipeline."""
+    agent_name: str
+    status: str = "pending"  # pending | working | done | error
+    output_summary: str = ""
+
+
+class GenerateVideoResponse(BaseModel):
+    """Response from POST /generate-video."""
+    session_id: str
+    video_type: str
+    video_type_label: str
+    creative_brief: dict = Field(default_factory=dict)
+    artistic_direction: dict = Field(default_factory=dict)
+    storyboard: list[dict] = Field(default_factory=list)
+    scene_visuals: list[dict] = Field(default_factory=list)
+    compliance_report: dict = Field(default_factory=dict)
+    editing_spec: dict = Field(default_factory=dict)
+    scene_images: list[str] = Field(default_factory=list)  # URLs to generated scene frame images (legacy/fallback)
+    generated_videos: list[str] = Field(default_factory=list)  # URLs to generated MP4 clips from Veo
+    final_video_url: Optional[str] = None  # URL to the concatenated final MP4
+    agent_steps: list[VideoAgentStep] = Field(default_factory=list)
+
+
+class VideoTypeInfo(BaseModel):
+    """Info about a single video type."""
+    key: str
+    label: str
+    description: str
+    scene_count: int
+    focus: str
+
+
+class VideoTypesResponse(BaseModel):
+    """Response from GET /video-types."""
+    video_types: list[VideoTypeInfo]
+

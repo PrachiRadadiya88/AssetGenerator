@@ -149,6 +149,7 @@ export function useAssets() {
         size: targetSize,
         consistentBackground: state.appDetails.consistentBackground,
         language: state.appDetails.language,
+        userVision: state.appDetails.userVision,
       });
       dispatch({ type: ActionTypes.ADD_SUCCESS, payload: result.asset });
       return result.asset;
