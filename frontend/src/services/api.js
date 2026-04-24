@@ -451,10 +451,12 @@ export async function scrapePlayStore(url) {
  * 
  * @returns {Promise<{video_types: Array}>}
  */
+/*
 export async function getVideoTypes() {
   const response = await api.get('/video-types');
   return response.data;
 }
+*/
 
 /**
  * Generate a Play Store promotional video using the agentic pipeline.
@@ -473,6 +475,7 @@ export async function getVideoTypes() {
  * @param {File[]} params.screenshots
  * @returns {Promise<Object>} Full pipeline output
  */
+/*
 export async function generateVideo({
   appName,
   appCategory,
@@ -538,3 +541,4 @@ export async function generateVideoVision({
   });
   return response.data.video_vision;
 }
+*/

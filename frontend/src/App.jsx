@@ -9,7 +9,7 @@ import InputPage from './pages/InputPage';
 import ResultPage from './pages/ResultPage';
 import DescriptionGeneratorPage from './pages/DescriptionGeneratorPage';
 import RebrandPage from './pages/RebrandPage';
-import VideoGeneratorPage from './pages/VideoGeneratorPage';
+// import VideoGeneratorPage from './pages/VideoGeneratorPage';
 
 export default function App() {
   return (

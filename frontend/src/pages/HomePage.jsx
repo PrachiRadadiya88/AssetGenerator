@@ -78,11 +78,13 @@ const features = [
     title: 'Instant App Rebranding',
     description: 'Scrape any Play Store URL to automatically extract metadata and screenshots for a seamless redesign.',
   },
-  /* {
+/*
+  {
     icon: <Video className="w-5 h-5" />,
     title: 'AI Video Studio',
     description: 'Generate Play Store promotional videos using a multi-agent AI pipeline with cinematic storyboards.',
-  }, */
+  },
+  */
 ];
 
 const steps = [
@@ -155,10 +157,12 @@ export default function HomePage() {
                 <span>Write Copy</span>
               </Link>
 
-              {/* <Link to="/video-generator" className="group btn-secondary text-lg px-8 py-5 border-2 border-primary/10 hover:border-primary/30 bg-white/60 backdrop-blur-md w-full sm:w-auto">
+              {/*
+              <Link to="/video-generator" className="group btn-secondary text-lg px-8 py-5 border-2 border-primary/10 hover:border-primary/30 bg-white/60 backdrop-blur-md w-full sm:w-auto">
                 <Video className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span>Video Studio</span>
-              </Link> */}
+              </Link>
+              */}
             </div>
 
           </div>
@@ -225,8 +229,9 @@ export default function HomePage() {
                 </div>
             </Link>
 
-            {/* Tool Card 4: Video Studio (HIDDEN) */}
-            {/* <Link to="/video-generator" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
+            {/* Tool Card 4: Video Studio */}
+            {/*
+            <Link to="/video-generator" className="group relative block rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-primary/5 bg-white">
                 <div className="aspect-video overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=1000" alt="Video Production" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" />
                     <div className="absolute inset-0 bg-gradient-to-t from-violet-700/80 to-transparent flex flex-col justify-end p-8 text-white">
@@ -240,7 +245,8 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
-            </Link> */}
+            </Link>
+            */}
           </div>
         </div>
       </section>
