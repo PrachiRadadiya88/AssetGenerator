@@ -6,9 +6,9 @@
 
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8001';
+// const API_BASE = 'http://localhost:8001';
 // const API_BASE = 'https://plural-muster-treading.ngrok-free.dev';
-// const API_BASE = 'https://asset-gen.rejoicehub.com';
+const API_BASE = 'https://asset-gen.rejoicehub.com';
 const API_URL = `${API_BASE}/api`;
 
 const api = axios.create({
