@@ -12,6 +12,7 @@ import uuid
 import zipfile
 import logging
 import asyncio
+import base64
 from io import BytesIO
 from typing import Optional
 
@@ -78,6 +79,16 @@ def _get_dimensions(orientation: str, custom_size: str = None):
     if orientation == "square":
         return 1080, 1080
     return 1080, 1920  # portrait (default)
+
+def _get_base64_image(filepath: str) -> str:
+    """Read an image file and return its base64 data URI."""
+    try:
+        with open(filepath, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+        return f"data:image/png;base64,{encoded}"
+    except Exception as e:
+        logger.error(f"Failed to encode image to base64: {e}")
+        return ""
 
 
 @router.post("/generate-assets", response_model=GenerateAssetsResponse)
@@ -278,7 +289,7 @@ async def generate_assets(
             id=asset_id,
             headline=feature.headline,
             subtext=feature.subtext,
-            image_url=f"/generated/{session_id}/{asset_id}.png",
+            image_url=_get_base64_image(final_path),
             orientation=asset_orientation,
             width=asset_width,
             height=asset_height,
@@ -400,7 +411,7 @@ async def add_asset(request: AddAssetRequest):
             id=asset_id,
             headline=feature.headline,
             subtext=feature.subtext,
-            image_url=f"/generated/{request.session_id}/{asset_id}.png",
+            image_url=_get_base64_image(final_path),
             orientation=orientation,
             width=width,
             height=height,
@@ -499,7 +510,7 @@ async def _compose_single_ad(request_data: dict, ad, session_dir: str, screensho
             ai_generated_path=bg_path,
             output_path=final_path,
         )
-        ad.image_url = f"/generated/{request_data['session_id']}/{os.path.basename(final_path)}"
+        ad.image_url = _get_base64_image(final_path)
         return True
     except Exception as e:
         logger.error(f"Ad composition failed for {ad.id}: {e}")
@@ -756,7 +767,7 @@ async def regenerate_asset(request: RegenerateAssetRequest):
         id=asset_id,
         headline=feature_data.headline,
         subtext=feature_data.subtext,
-        image_url=f"/generated/{request.session_id}/{asset_id}.png",
+        image_url=_get_base64_image(final_path),
         orientation=orientation,
         width=width,
         height=height,
@@ -797,4 +808,98 @@ async def scrape_playstore(request: ScrapePlayStoreRequest):
         logger.error(f"Play Store scrape failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error while scraping Play Store")
 
+
+"""
+# ═════════════════════════════════════════════════════════════════
+# VIDEO GENERATION ROUTES (COMMENTED OUT)
+# ═════════════════════════════════════════════════════════════════
+
+from app.models.schemas import (
+    GenerateVideoRequest,
+    GenerateVideoResponse,
+    VideoTypesResponse,
+    VideoTypeInfo,
+)
+# from app.services.video_service import AgenticStudio
+# from app.agents.config import VIDEO_TYPES
+
+
+@router.get("/video-types", response_model=VideoTypesResponse)
+async def get_video_types():
+    # Return all available video types for the frontend to display.
+    # types_list = [
+    #     VideoTypeInfo(
+    #         key=key,
+    #         label=info["label"],
+    #         description=info["description"],
+    #         scene_count=info["scene_count"],
+    #         focus=info["focus"],
+    #     )
+    #     for key, info in VIDEO_TYPES.items()
+    # ]
+    # return VideoTypesResponse(video_types=types_list)
+    return VideoTypesResponse(video_types=[])
+
+
+@router.post("/generate-video-vision")
+async def generate_video_vision(
+    app_name: str = Body(""),
+    app_category: str = Body(""),
+    app_description: str = Body(""),
+    features: list[str] = Body(default=[]),
+    target_audience: str = Body(""),
+    video_type: str = Body("problem_solution"),
+    language: str = Body("English"),
+):
+    # Generate a Play Store video vision/scenario from the app description.
+    # from app.agents.base_agent import get_client
+    
+    # features_text = "\n".join([f"- {f}" for f in features if f.strip()])
+    
+    # prompt = GENERATE_VIDEO_VISION_PROMPT.format(
+    #     app_name=app_name,
+    #     app_category=app_category,
+    #     app_description=app_description,
+    #     target_audience=target_audience,
+    #     features_text=features_text,
+    #     video_type=video_type,
+    #     language=language
+    # )
+
+    # try:
+    #     client = get_client()
+    #     response = await client.aio.models.generate_content(
+    #         model="gemini-3-flash-preview",
+    #         contents=prompt,
+    #     )
+    #     vision_text = response.text.strip().strip('"').strip("'")
+    #     return {"video_vision": vision_text}
+    # except Exception as e:
+    #     logger.error(f"Failed to generate video vision: {e}")
+    #     raise HTTPException(status_code=500, detail=str(e))
+    return {"video_vision": "Video generation is currently disabled."}
+
+
+@router.post("/generate-video", response_model=GenerateVideoResponse)
+async def generate_video(
+    app_name: str = Form(...),
+    app_category: str = Form(...),
+    target_audience: str = Form(""),
+    brand_style: str = Form(""),
+    color_theme: str = Form("#8B5E3C"),
+    target_os: str = Form("Android"),
+    features: str = Form("[]"),
+    language: str = Form("English"),
+    video_type: str = Form("problem_solution"),
+    user_description: str = Form(""),
+    app_description: str = Form(""),
+    screenshots: Optional[list[UploadFile]] = File(None),
+    logo: Optional[UploadFile] = File(None),
+):
+    # import json as json_module
+    # session_id = str(uuid.uuid4())[:8]
+    # ...
+    # return GenerateVideoResponse(**result)
+    raise HTTPException(status_code=403, detail="Video generation is currently disabled.")
+"""
 

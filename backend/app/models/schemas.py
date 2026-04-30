@@ -169,12 +169,13 @@ class ScrapedAppData(BaseModel):
     suggested_color: str
 
 
+"""
 # ═════════════════════════════════════════════════════════════════
-# VIDEO GENERATION SCHEMAS
+# VIDEO GENERATION SCHEMAS (COMMENTED OUT)
 # ═════════════════════════════════════════════════════════════════
 
 class VideoTextOverlaySpec(BaseModel):
-    """Text overlay specification for a video scene."""
+    # Text overlay specification for a video scene.
     text: str = ""
     position: str = "bottom-center"
     font_style: str = "bold"
@@ -183,7 +184,7 @@ class VideoTextOverlaySpec(BaseModel):
 
 
 class VideoScene(BaseModel):
-    """A single scene in the video storyboard."""
+    # A single scene in the video storyboard.
     scene_number: int
     duration_seconds: int = 4
     scene_title: str = ""
@@ -196,7 +197,7 @@ class VideoScene(BaseModel):
 
 
 class VideoSceneVisual(BaseModel):
-    """Visual Designer output for a single scene."""
+    # Visual Designer output for a single scene.
     scene_number: int
     video_generation_prompt: str
     text_overlay_spec: Optional[VideoTextOverlaySpec] = None
@@ -206,7 +207,7 @@ class VideoSceneVisual(BaseModel):
 
 
 class GenerateVideoRequest(BaseModel):
-    """Request body for POST /generate-video."""
+    # Request body for POST /generate-video.
     session_id: Optional[str] = None
     app_name: str
     app_category: str
@@ -216,20 +217,20 @@ class GenerateVideoRequest(BaseModel):
     target_os: str = "Android"
     features: list[str] = Field(default_factory=list)
     language: str = "English"
-    video_type: str = "cinematic"  # cinematic | walkthrough | tutorial | feature_highlight | before_after
-    user_description: str = ""  # User's custom description of what they want
-    screenshot_ids: list[str] = Field(default_factory=list)  # References to uploaded/generated screenshots
+    video_type: str = "problem_solution"
+    user_description: str = ""
+    screenshot_ids: list[str] = Field(default_factory=list)
 
 
 class VideoAgentStep(BaseModel):
-    """Status of an individual agent in the pipeline."""
+    # Status of an individual agent in the pipeline.
     agent_name: str
-    status: str = "pending"  # pending | working | done | error
+    status: str = "pending"
     output_summary: str = ""
 
 
 class GenerateVideoResponse(BaseModel):
-    """Response from POST /generate-video."""
+    # Response from POST /generate-video.
     session_id: str
     video_type: str
     video_type_label: str
@@ -239,14 +240,14 @@ class GenerateVideoResponse(BaseModel):
     scene_visuals: list[dict] = Field(default_factory=list)
     compliance_report: dict = Field(default_factory=dict)
     editing_spec: dict = Field(default_factory=dict)
-    scene_images: list[str] = Field(default_factory=list)  # URLs to generated scene frame images (legacy/fallback)
-    generated_videos: list[str] = Field(default_factory=list)  # URLs to generated MP4 clips from Veo
-    final_video_url: Optional[str] = None  # URL to the concatenated final MP4
+    scene_images: list[str] = Field(default_factory=list)
+    generated_videos: list[str] = Field(default_factory=list)
+    final_video_url: Optional[str] = None
     agent_steps: list[VideoAgentStep] = Field(default_factory=list)
 
 
 class VideoTypeInfo(BaseModel):
-    """Info about a single video type."""
+    # Info about a single video type.
     key: str
     label: str
     description: str
@@ -255,6 +256,7 @@ class VideoTypeInfo(BaseModel):
 
 
 class VideoTypesResponse(BaseModel):
-    """Response from GET /video-types."""
+    # Response from GET /video-types.
     video_types: list[VideoTypeInfo]
+"""
 

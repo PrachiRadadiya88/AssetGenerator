@@ -271,8 +271,8 @@ async def generate_asset_image(
     else:
         os_description = "Use the latest IPHONE style with the Dynamic Island pill-shaped cutout and premium rounded screen corners. STRICTLY NO Android features."
 
-    if orientation == "landscape":
-        # Landscape: Redesigned layout with portrait phone
+    if orientation in ["landscape", "banner"]:
+        # Landscape/Banner: Redesigned layout with portrait phone
         prompt = IMAGE_GENERATION_LANDSCAPE_PROMPT.format(
             app_name=app_name,
             app_category=app_category,

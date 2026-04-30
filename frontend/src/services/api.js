@@ -179,7 +179,10 @@ export function getDownloadAllUrl(sessionId) {
  */
 export async function fetchImageAsBlob(imagePath) {
   try {
-    const url = imagePath.startsWith('http') ? imagePath : `${API_BASE}${imagePath}`;
+    if (!imagePath) return null;
+    if (imagePath.startsWith('data:image')) return imagePath;
+    
+    const url = imagePath.startsWith('http') ? imagePath : (imagePath.startsWith('/') ? `${API_BASE}${imagePath}` : `${API_BASE}/${imagePath}`);
     const response = await axios.get(url, {
       responseType: 'blob',
       headers: {
@@ -202,6 +205,13 @@ export async function fetchImageAsBlob(imagePath) {
  */
 export async function fetchImageFile(imagePath, fileName = 'screenshot.png') {
   try {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('data:image')) {
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+      return new File([blob], fileName, { type: blob.type });
+    }
+    
     const url = imagePath.startsWith('http') ? imagePath : (imagePath.startsWith('/') ? `${API_BASE}${imagePath}` : `${API_BASE}/${imagePath}`);
     const response = await axios.get(url, {
       responseType: 'blob',
@@ -446,36 +456,12 @@ export async function scrapePlayStore(url) {
   return response.data;
 }
 
-/**
- * Fetch available video types for the Video Generator.
- * 
- * @returns {Promise<{video_types: Array}>}
- */
-/*
+/* 
 export async function getVideoTypes() {
   const response = await api.get('/video-types');
   return response.data;
 }
-*/
 
-/**
- * Generate a Play Store promotional video using the agentic pipeline.
- * 
- * @param {Object} params
- * @param {string} params.appName
- * @param {string} params.appCategory
- * @param {string} params.targetAudience
- * @param {string} params.brandStyle
- * @param {string} params.colorTheme
- * @param {string} params.targetOs
- * @param {string[]} params.features
- * @param {string} params.language
- * @param {string} params.videoType
- * @param {string} params.userDescription
- * @param {File[]} params.screenshots
- * @returns {Promise<Object>} Full pipeline output
- */
-/*
 export async function generateVideo({
   appName,
   appCategory,
@@ -485,7 +471,7 @@ export async function generateVideo({
   targetOs = 'Android',
   features = [],
   language = 'English',
-  videoType = 'cinematic',
+  video_type = 'problem_solution',
   userDescription = '',
   appDescription = '',
   screenshots = [],
@@ -500,7 +486,7 @@ export async function generateVideo({
   formData.append('target_os', targetOs);
   formData.append('features', JSON.stringify(features));
   formData.append('language', language);
-  formData.append('video_type', videoType);
+  formData.append('video_type', video_type);
   formData.append('user_description', userDescription);
   formData.append('app_description', appDescription);
 
@@ -527,7 +513,7 @@ export async function generateVideoVision({
   appDescription = '',
   features = [],
   targetAudience = '',
-  videoType = 'cinematic',
+  videoType = 'problem_solution',
   language = 'English',
 }) {
   const response = await api.post('/generate-video-vision', {
@@ -540,5 +526,5 @@ export async function generateVideoVision({
     language: language,
   });
   return response.data.video_vision;
-}
+} 
 */

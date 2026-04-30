@@ -66,17 +66,6 @@ backend/generated/*
 frontend/dist/
 frontend/node_modules/
 
-# --- Video Generation (Disabled) ---
-backend/app/agents/director.py
-backend/app/agents/editor.py
-backend/app/agents/producer.py
-backend/app/agents/screenwriter.py
-backend/app/agents/studio_manager.py
-backend/app/agents/visual_designer.py
-backend/app/agents/music_composer.py
-backend/app/services/video_service.py
-frontend/src/pages/VideoGeneratorPage.jsx
-
 # --- Logs ---
 logs/
 *.log
@@ -110,3 +99,19 @@ desktop.ini
 *.tar.gz
 *.rar
 *.7z
+
+# --- Video Generation Module (Disabled) ---
+backend/app/services/video_service.py
+backend/app/services/video_service.py.bak
+backend/app/agents/studio_manager.py
+backend/app/agents/screenwriter.py
+backend/app/agents/director.py
+backend/app/agents/visual_designer.py
+backend/app/agents/producer.py
+backend/app/agents/editor.py
+backend/app/agents/music_composer.py
+backend/app/agents/ui_analyzer.py
+backend/app/agents/config.py
+backend/app/agents/base_agent.py
+frontend/src/pages/VideoGeneratorPage.jsx
+

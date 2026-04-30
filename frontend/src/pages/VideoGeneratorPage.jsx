@@ -8,6 +8,7 @@ import {
   Video, Upload, Sparkles, Play, CheckCircle2, AlertCircle,
   Loader2, Film, Clapperboard, Eye, BookOpen, Zap, ArrowLeftRight,
   ChevronDown, ChevronUp, X, Image as ImageIcon,
+  Target, Smile, PenTool, Layers, BarChart3, Drama, Gem, Repeat, Megaphone, Scale,
 } from 'lucide-react';
 import { generateVideo, getImageUrl, fetchImageAsBlob, generateFeaturesList, generateVideoVision } from '../services/api';
 import {
@@ -18,11 +19,18 @@ import {
 } from '../utils/constants';
 
 const VIDEO_TYPES = [
-  { key: 'cinematic', label: 'Cinematic / Brand Story', icon: <Film className="w-6 h-6" />, description: 'Emotional, narrative-driven video with dramatic lighting and storytelling.', focus: 'emotion, brand identity', scenes: 5 },
-  { key: 'walkthrough', label: 'App Walkthrough', icon: <Eye className="w-6 h-6" />, description: 'Screen-by-screen tour of key features with smooth UI animations.', focus: 'functionality, UI beauty', scenes: 4 },
-  { key: 'tutorial', label: 'How-To / Tutorial', icon: <BookOpen className="w-6 h-6" />, description: 'Step-by-step guide with on-screen annotations and text overlays.', focus: 'clarity, guidance', scenes: 4 },
-  { key: 'feature_highlight', label: 'Feature Spotlight', icon: <Zap className="w-6 h-6" />, description: 'Fast-paced, punchy video highlighting killer features with bold text.', focus: 'speed, impact', scenes: 4 },
-  { key: 'before_after', label: 'Before & After', icon: <ArrowLeftRight className="w-6 h-6" />, description: 'Dramatic contrast showing life before vs after using the app.', focus: 'transformation', scenes: 4 },
+  { key: 'problem_solution', label: 'Problem → Solution', icon: <Target className="w-6 h-6" />, description: 'Show a pain point, then reveal how the app solves it dramatically.', focus: 'pain, reveal, transformation', scenes: 4 },
+  { key: 'walkthrough', label: 'App Demo / Walkthrough', icon: <Eye className="w-6 h-6" />, description: 'Clean screen-by-screen tour of the top 3 features.', focus: 'UI, gestures, features', scenes: 4 },
+  { key: 'lifestyle', label: 'Lifestyle / Real-World', icon: <Smile className="w-6 h-6" />, description: 'Person uses the app naturally in a real-life setting. Soft-sell.', focus: 'emotion, aspiration', scenes: 3 },
+  { key: 'explainer', label: 'Explainer Animation', icon: <PenTool className="w-6 h-6" />, description: 'Animated illustrations explain the problem, then transition to real UI.', focus: 'clarity, motion graphics', scenes: 3 },
+  { key: 'feature_highlight', label: 'Feature Highlight', icon: <Zap className="w-6 h-6" />, description: 'Fast-paced, beat-synced cuts showcasing features rapidly.', focus: 'speed, bold captions', scenes: 3 },
+  { key: 'before_after', label: 'Before vs After', icon: <ArrowLeftRight className="w-6 h-6" />, description: 'Split-screen: struggling without the app vs seamless with it.', focus: 'contrast, transformation', scenes: 3 },
+  { key: 'social_proof', label: 'Social Proof', icon: <BarChart3 className="w-6 h-6" />, description: 'User testimonials, star ratings, and stats build trust.', focus: 'trust, credibility', scenes: 3 },
+  { key: 'narrative', label: 'Story Narrative', icon: <Drama className="w-6 h-6" />, description: 'Cinematic mini-story: protagonist discovers the app, life transforms.', focus: 'storytelling, emotion', scenes: 3 },
+  { key: 'minimalist', label: 'Minimalist Premium', icon: <Gem className="w-6 h-6" />, description: 'Elegant, slow-paced showcase on clean white background.', focus: 'elegance, simplicity', scenes: 3 },
+  { key: 'loopable', label: 'Loopable Micro', icon: <Repeat className="w-6 h-6" />, description: 'Seamless 15s loop. No CTA, no logo. Pure motion.', focus: 'seamless loop', scenes: 2 },
+  { key: 'hook_first', label: 'Hook-First Short', icon: <Megaphone className="w-6 h-6" />, description: 'Scroll-stopping hook, then proof and CTA. 3 hook variations.', focus: 'attention, urgency', scenes: 4 },
+  { key: 'comparison', label: 'Comparison', icon: <Scale className="w-6 h-6" />, description: 'Tasteful side-by-side: generic "other apps" vs your app.', focus: 'differentiation', scenes: 3 },
 ];
 
 const AGENTS = [
@@ -40,7 +48,7 @@ export default function VideoGeneratorPage() {
     appName: '', appCategory: '', targetAudience: '', brandStyle: '',
     colorTheme: '#8B5E3C', colorMode: 'solid', colorEnd: '#D4A574',
     targetOs: 'Android', language: 'English',
-    videoType: 'cinematic', userDescription: '', appDescription: '', features: [''],
+    videoType: 'problem_solution', userDescription: '', appDescription: '', features: [''],
   });
   const [isGeneratingFeatures, setIsGeneratingFeatures] = useState(false);
   const [isGeneratingVision, setIsGeneratingVision] = useState(false);
@@ -499,23 +507,23 @@ export default function VideoGeneratorPage() {
             <div className="space-y-6">
               <div className="card-base p-6">
                 <h2 className="text-lg font-bold text-textPrimary mb-4">Video Type</h2>
-                <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
                   {VIDEO_TYPES.map(vt => (
                     <button
                       key={vt.key}
                       onClick={() => updateForm('videoType', vt.key)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                      className={`text-left p-3 rounded-xl border-2 transition-all duration-200 ${
                         form.videoType === vt.key
                           ? 'border-primary bg-primary/5 shadow-md'
                           : 'border-primary/10 hover:border-primary/30 bg-white'
                       }`}
                     >
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className={form.videoType === vt.key ? 'text-primary' : 'text-textSecondary'}>{vt.icon}</span>
-                        <span className="font-semibold text-sm text-textPrimary">{vt.label}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`flex-shrink-0 ${form.videoType === vt.key ? 'text-primary' : 'text-textSecondary'}`}>{vt.icon}</span>
+                        <span className="font-semibold text-xs text-textPrimary leading-tight">{vt.label}</span>
                       </div>
-                      <p className="text-xs text-textSecondary ml-9">{vt.description}</p>
-                      <p className="text-xs text-primary/60 ml-9 mt-1">{vt.scenes} scenes · {vt.focus}</p>
+                      <p className="text-[10px] text-textSecondary line-clamp-2 ml-8">{vt.description}</p>
+                      <p className="text-[10px] text-primary/60 ml-8 mt-0.5">{vt.scenes} scenes</p>
                     </button>
                   ))}
                 </div>
@@ -683,16 +691,33 @@ export default function VideoGeneratorPage() {
                       <div className="flex items-center gap-3 mb-3">
                         <span className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">{scene.scene_number || i + 1}</span>
                         <div>
-                          <h4 className="font-semibold text-textPrimary">{scene.scene_title}</h4>
-                          <p className="text-xs text-textSecondary">{scene.duration_seconds}s · {scene.transition_in} → {scene.transition_out}</p>
+                          <h4 className="font-semibold text-textPrimary capitalize">{scene.scene_title || scene.scene_type || `Scene ${scene.scene_number || i + 1}`}</h4>
+                          <p className="text-xs text-textSecondary">{scene.duration_seconds || 4}s</p>
                         </div>
                       </div>
-                      <p className="text-sm text-textSecondary mb-3">{scene.visual_description}</p>
-                      {scene.text_overlay && (
-                        <div className="inline-block px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm font-medium mb-3">
-                          Text: "{scene.text_overlay}"
-                        </div>
-                      )}
+                      <div className="space-y-1.5 mb-4">
+                        {Object.entries(scene).map(([k, v]) => {
+                          if (['scene_number', 'duration_seconds', 'use_screenshot_index', 'scene_title', 'scene_type', 'is_final_logo_frame', 'time_range'].includes(k)) return null;
+                          if (typeof v !== 'string' && typeof v !== 'number') return null;
+                          if (!v) return null;
+                          
+                          // highlight text overlays
+                          if (k.includes('text') || k.includes('caption') || k.includes('quote')) {
+                            return (
+                              <div key={k} className="inline-block px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm font-medium mt-1 mb-1 mr-2">
+                                {k.replace(/_/g, ' ')}: "{v}"
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div key={k} className="text-sm">
+                              <span className="font-semibold text-textSecondary capitalize">{k.replace(/_/g, ' ')}: </span>
+                              <span className="text-textPrimary">{v}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
                       {sceneBlobUrls[i] ? (
                         <div className="mt-3 rounded-xl overflow-hidden border border-primary/10 shadow-card bg-black aspect-video">
                           <video 
